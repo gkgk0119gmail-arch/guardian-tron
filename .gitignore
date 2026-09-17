@@ -1,0 +1,24 @@
+# build outputs
+**/Debug/
+**/Release/
+**/build/
+*.o
+*.elf
+*.bin
+*.hex
+*.map
+*.list
+*.su
+*.cyclo
+# local tooling / large references (not part of the submission)
+tools/.venv/
+st_od_ref/
+*.zip
+# python
+__pycache__/
+*.pyc
+# demo keys from the threat-model scripts
+jetson_stack/jetson/threats/keys/
+# IDE / OS
+.DS_Store
+.metadata/
