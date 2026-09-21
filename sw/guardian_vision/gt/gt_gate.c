@@ -151,11 +151,12 @@ EXPORT void gt_gate_kick(void) { gt_uart_kick(GT_UART_JETSON); }
 EXPORT const gt_gate_status_t *gt_gate_status(void) { return &st; }
 
 /* ---- task ---- */
+EXPORT volatile UW gt_loops;		/* gate loop iterations (read by the report task) */
 EXPORT void gt_gate_task(INT stacd, void *exinf)
 {
 	UB   rx[64], frame[GK_CMD_FRAME_LEN];
 	INT  have = 0;
-	UW   t_rx = 0, last_cmd_ms = 0, last_report_ms = 0, last_alive_ms = 0;
+	UW   t_rx = 0, last_cmd_ms = 0, last_alive_ms = 0;
 
 	dwt_init();
 	gk_core_init(&gk);
@@ -168,9 +169,8 @@ EXPORT void gt_gate_task(INT stacd, void *exinf)
 	INT link_up = 0;
 	INT hazard_active = 0;
 
-	UW loops = 0, p_loops = 0, p_csi = 0, p_dcm = 0, p_u2 = 0;
 	while (1) {
-		loops++;
+		gt_loops++;
 		INT n = gt_uart_read(GT_UART_JETSON, rx, sizeof rx, 20);
 
 		/* local safety (camera/NPU) has priority over anything the Jetson says */
@@ -317,45 +317,55 @@ EXPORT void gt_gate_task(INT stacd, void *exinf)
 		if (st.stopped && ms - last_alive_ms >= 100) {		/* keep VESC braking while stopped */
 			gt_vesc_set_rpm(0); last_alive_ms = ms;
 		}
-		static UW last_perf_ms, last_metric_ms;
-		if (ms - last_metric_ms >= 10000) {
-			last_metric_ms = ms;
+	}
+}
+
+/* ---- reporting task (priority 25, below every safety task) ----
+ * Formatting the percentile table and the status lines costs up to ~0.8 ms every 10 s.
+ * Done inside the gate task (priority 8) it delayed the 100 Hz IMU monitor (priority 10):
+ * rare jitter spikes up to 817 us in long runs. Here it only uses otherwise idle time. */
+EXPORT void gt_report_task(INT stacd, void *exinf)
+{
+	UW sec = 0, p_loops = 0, p_csi = 0, p_dcm = 0, p_u2 = 0;
+	UW last_fr = 0, same_fr = 0, dumped = 0;
+	while (1) {
+		tk_dly_tsk(1000);
+		sec++;
+		if (sec % 10 == 0) {
 			gv_metric_report();
 			gv_stack_report();
 		}
-		if (ms - last_perf_ms >= 5000) {
-			last_perf_ms = ms;
+		if (sec % 5 == 0) {
 			gv_perf_report();
+			UINT imask; DI(imask);
 			gv_stat_t g = gv_perf_gate_cmd, q = gv_perf_irq2task, z = gv_perf_hazard2brake;
 			gv_stat_reset(&gv_perf_gate_cmd); gv_stat_reset(&gv_perf_irq2task);
+			EI(imask);
 			tm_printf((UB*)"[perf] gate CMD verdict+actuation n=%d avg %d us max %d us | USART2 irq->gate task n=%d avg %d ns max %d ns | hazard->brake (since boot) n=%d max %d us\n",
 				  (INT)g.n, g.n ? (INT)GV_CYC2US((UW)(g.sum / g.n)) : 0, (INT)GV_CYC2US(g.max),
 				  (INT)q.n, q.n ? (INT)GV_CYC2NS((UW)(q.sum / q.n)) : 0, (INT)GV_CYC2NS(q.max),
 				  (INT)z.n, (INT)GV_CYC2US(z.max));
 		}
-		if (ms - last_report_ms >= 1000) {
-			last_report_ms = ms;
-			T_RTSK vr = {0}; if (gv_vision_tid > 0) tk_ref_tsk(gv_vision_tid, &vr);
-			tm_printf((UB*)"[gate] n=%d ok=%d veto=%d bad=%d replay=%d maxlat=%dus | servo=%d v=%d mm/s %s | vis st=%d fr=%d camerr=%d tsk=%x/%x | rx ovr=%d | /s loops %d csi %d dcmipp %d u2 %d\n",
-				  (INT)gk.n_total, (INT)gk.n_approved, (INT)gk.n_veto, (INT)gk.n_malformed,
-				  (INT)gk.n_replay_or_reorder, (INT)gk.max_latency_us,
-				  (INT)(st.servo * 1000), (INT)(st.speed * 1000), st.stopped ? "STOPPED" : "DRIVING",
-				  (INT)gv_stage, (INT)gv_frames, (INT)gv_cam_err, (INT)vr.tskstat, (INT)vr.tskwait, (INT)gt_uart_overruns(GT_UART_JETSON),
-				  (INT)(loops - p_loops), (INT)(gv_irq_csi - p_csi), (INT)(gv_irq_dcmipp - p_dcm), (INT)(gt_irq_usart2 - p_u2));
-			p_loops = loops; p_csi = gv_irq_csi; p_dcm = gv_irq_dcmipp; p_u2 = gt_irq_usart2;
-			/* vision stall probe: frame counter frozen for 3 s -> dump the vision task's saved
-			 * context once (look for 0x340xxxxx code addresses, then addr2line) */
-			static UW last_fr, same_fr, dumped;
-			if (gv_frames == last_fr) same_fr++; else { same_fr = 0; dumped = 0; }
-			last_fr = gv_frames;
-			if (same_fr >= 3 && !dumped && gv_vision_tid > 0) {
-				dumped = 1;
-				TCB *t = get_tcb(gv_vision_tid);
-				UW *sp = (UW *) t->tskctxb.ssp;
-				tm_printf((UB*)"[gate] VISION STALL st=%d ssp=%x:", (INT)gv_stage, (UW)sp);
-				for (INT k = 0; k < 48; k++) tm_printf((UB*)" %x", sp[k]);
-				tm_printf((UB*)"\n");
-			}
+		UW loops = gt_loops;
+		T_RTSK vr = {0}; if (gv_vision_tid > 0) tk_ref_tsk(gv_vision_tid, &vr);
+		tm_printf((UB*)"[gate] n=%d ok=%d veto=%d bad=%d replay=%d maxlat=%dus | servo=%d v=%d mm/s %s | vis st=%d fr=%d camerr=%d tsk=%x/%x | rx ovr=%d | /s loops %d csi %d dcmipp %d u2 %d\n",
+			  (INT)gk.n_total, (INT)gk.n_approved, (INT)gk.n_veto, (INT)gk.n_malformed,
+			  (INT)gk.n_replay_or_reorder, (INT)gk.max_latency_us,
+			  (INT)(st.servo * 1000), (INT)(st.speed * 1000), st.stopped ? "STOPPED" : "DRIVING",
+			  (INT)gv_stage, (INT)gv_frames, (INT)gv_cam_err, (INT)vr.tskstat, (INT)vr.tskwait, (INT)gt_uart_overruns(GT_UART_JETSON),
+			  (INT)(loops - p_loops), (INT)(gv_irq_csi - p_csi), (INT)(gv_irq_dcmipp - p_dcm), (INT)(gt_irq_usart2 - p_u2));
+		p_loops = loops; p_csi = gv_irq_csi; p_dcm = gv_irq_dcmipp; p_u2 = gt_irq_usart2;
+		/* vision stall probe: frame counter frozen for 3 s -> dump the vision task's saved
+		 * context once (look for 0x340xxxxx code addresses, then addr2line) */
+		if (gv_frames == last_fr) same_fr++; else { same_fr = 0; dumped = 0; }
+		last_fr = gv_frames;
+		if (same_fr >= 3 && !dumped && gv_vision_tid > 0) {
+			dumped = 1;
+			TCB *t = get_tcb(gv_vision_tid);
+			UW *sp = (UW *) t->tskctxb.ssp;
+			tm_printf((UB*)"[gate] VISION STALL st=%d ssp=%x:", (INT)gv_stage, (UW)sp);
+			for (INT k = 0; k < 48; k++) tm_printf((UB*)" %x", sp[k]);
+			tm_printf((UB*)"\n");
 		}
 	}
 }

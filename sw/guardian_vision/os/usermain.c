@@ -44,6 +44,9 @@ LOCAL T_CTSK ctsk_gate   = { .itskpri = 8,  .stksz = GATE_STK,   .bufptr = stk_g
 LOCAL T_CTSK ctsk_imu    = { .itskpri = 10, .stksz = IMU_STK,    .bufptr = stk_imu,    .task = gv_imu_task,    .tskatr = TSK_ATR };
 #define LOG_STK		1024
 LOCAL UB stk_log[LOG_STK]       __attribute__((aligned(32)));
+#define RPT_STK		2048
+LOCAL UB stk_rpt[RPT_STK]       __attribute__((aligned(32)));
+LOCAL T_CTSK ctsk_rpt    = { .itskpri = 25, .stksz = RPT_STK, .bufptr = stk_rpt, .task = gt_report_task, .tskatr = TSK_ATR };
 LOCAL T_CTSK ctsk_log    = { .itskpri = 30, .stksz = LOG_STK, .bufptr = stk_log, .task = gv_log_task, .tskatr = TA_HLNG | TA_RNG0 | TA_USERBUF };
 LOCAL T_CTSK ctsk_vision = { .itskpri = 20, .stksz = VISION_STK, .bufptr = stk_vision, .task = gv_vision_task, .tskatr = TSK_ATR };
 
@@ -65,6 +68,7 @@ EXPORT INT usermain(void)
 	gv_stack_watch("imu", stk_imu, IMU_STK);
 	gv_stack_watch("vision", stk_vision, VISION_STK);
 	gv_stack_watch("log", stk_log, LOG_STK);
+	gv_stack_watch("report", stk_rpt, RPT_STK);
 	{	/* from here on console output goes through the logger task (gv_log.c) */
 		ID lg = tk_cre_tsk(&ctsk_log); tk_sta_tsk(lg, 0); gv_perf_name(lg, "log");
 	}
@@ -81,10 +85,11 @@ EXPORT INT usermain(void)
 	ID gate = tk_cre_tsk(&ctsk_gate);
 	ID imu  = tk_cre_tsk(&ctsk_imu);
 	ID vis  = tk_cre_tsk(&ctsk_vision);
+	ID rpt  = tk_cre_tsk(&ctsk_rpt);
 	if (gate < E_OK || imu < E_OK || vis < E_OK)
 		tm_printf((UB*)"[main] task create failed: gate %d imu %d vision %d\n", gate, imu, vis);
 	gv_vision_tid = vis;
-	gv_perf_name(tk_get_tid(), "main"); gv_perf_name(gate, "gate"); gv_perf_name(imu, "imu"); gv_perf_name(vis, "vision");
+	gv_perf_name(tk_get_tid(), "main"); gv_perf_name(gate, "gate"); gv_perf_name(imu, "imu"); gv_perf_name(vis, "vision"); gv_perf_name(rpt, "report");
 
 	gv_mpu_init(gate);
 	gv_mpu_add_stack_guard(stk_gate);
@@ -99,6 +104,7 @@ EXPORT INT usermain(void)
 			"[rtos]   gate      8  Jetson CMD @100 Hz, kick  1 ms      HI-CRIT A    watchdog 200 ms -> brake\n",
 			"[rtos]   imu      10  cyclic handler 10 ms      10 ms     HI-CRIT B    no sample -> keep last hazard state\n",
 			"[rtos]   vision   20  camera frame (~15 fps)    100 ms    MED-CRIT     no frame 500 ms -> car held\n",
+			"[rtos]   report   25  every 1 s                 best eff  NON-CRIT     a late report, nothing else\n",
 			"[rtos]   log      30  ring buffer non-empty     best eff  NON-CRIT     drop + count\n",
 			"[rtos] kernel tick 1 ms, MPU on, dispatch hook on; metrics table every 10 s ([metric] lines)\n",
 		};
@@ -108,6 +114,7 @@ EXPORT INT usermain(void)
 	tk_sta_tsk(gate, 0);
 	tk_sta_tsk(imu, 0);
 	tk_sta_tsk(vis, 0);
+	tk_sta_tsk(rpt, 0);
 	tk_slp_tsk(TMO_FEVR);
 	return 0;
 }

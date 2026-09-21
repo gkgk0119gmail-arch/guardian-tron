@@ -17,6 +17,38 @@ All connections below were checked on the board. Signal levels are 3.3 V.
                                                     ToF (0x29), IMU (0x6A)
 ```
 
+## Cables as built on the car (colour map)
+
+The car ships with every cable below already connected. Nothing has to be re-wired.
+
+**Jetson ↔ STM32 command link:** a PL2303 USB-TTL cable, USB end in the Jetson.
+
+| Wire colour | USB-TTL signal | STM32N6570-DK pin (Arduino header) | MCU pin / function |
+|---|---|---|---|
+| green | TXD (Jetson → STM32) | **D0** | PF6 · USART2 RX |
+| white | RXD (STM32 → Jetson) | **D1** | PD5 · USART2 TX |
+| black | GND | **GND** | ground |
+| red | +5 V | not connected | — |
+
+**STM32 ↔ VESC:** a JST-GH harness into the VESC COMM port.
+
+| Wire colour | STM32N6570-DK pin (Arduino header) | MCU pin / function | VESC COMM pin |
+|---|---|---|---|
+| red | **D5** | PE10 · USART3 TX (pins swapped in software) | RX |
+| brown | **A5** | PB10 · USART3 RX | TX |
+| black | **GND** | ground | GND |
+
+The red VESC wire is a **signal**, not 5 V.
+
+**Other connections**
+
+| Cable | From | To |
+|---|---|---|
+| camera FFC ribbon | camera module MB1854 | DK camera connector |
+| USB-C | laptop, or the 5 V buck converter on the car | DK **ST-LINK USB-C** port: powers the board and carries the console |
+| Ethernet | Hokuyo UST-10LX | Jetson |
+| XT60 + WAGO 221 | 4S LiPo | VESC, Jetson, LiDAR, 5 V buck converter |
+
 ## Links
 
 | Link | STM32 pins | Peripheral | Settings | Peer |

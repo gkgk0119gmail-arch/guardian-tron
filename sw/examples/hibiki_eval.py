@@ -4,10 +4,13 @@
   # 1) no hardware: re-evaluate one of our recorded runs
   python3 sw/examples/hibiki_eval.py --offline sw/results/raw_logs/run_A_person_stress_freeze/stm32.log
 
-  # 2) the board on USB (ST-LINK): guided checks, the console port is found automatically
+  # 2) the car: watch the STM32 while you drive it from the Jetson (ssh), Ctrl+C = report
+  python3 sw/examples/hibiki_eval.py --watch
+
+  # 3) the board on USB (ST-LINK): guided checks, the console port is found automatically
   python3 sw/examples/hibiki_eval.py
 
-  # 3) board + a 3.3 V USB-TTL on D0/D1/GND: the PC also plays the Jetson and injects faults
+  # 4) board + a 3.3 V USB-TTL on D0/D1/GND (instead of the Jetson): the PC plays the Jetson
   python3 sw/examples/hibiki_eval.py --host COM5            (Windows)
   python3 sw/examples/hibiki_eval.py --host /dev/ttyUSB0    (Linux; macOS: /dev/cu.usbserial-*)
 
@@ -65,7 +68,7 @@ def fmt(x):
 # --------------------------------------------------------------------------- what the firmware prints
 RE = {
     'kernel': re.compile(r'microT-Kernel Version ([\d.]+)'),
-    'rtos': re.compile(r'^\[rtos\]\s+(gate|imu|vision|log)\s+(\d+)'),
+    'rtos': re.compile(r'^\[rtos\]\s+(gate|imu|vision|report|log)\s+(\d+)'),
     'vision': re.compile(r'^\[vision\] ([\d.]+) fps \| NPU (\d+) us .*?isp_err (\d+)'),
     'metric': re.compile(r'^\[metric\] (\w+): n=(\d+) mean (\S+) p50 (\S+) p95 (\S+) p99 (\S+) max (\S+) \| target < (\S+) over (\d+) -> (\w+)'),
     'stack': re.compile(r'(\w+) (\d+)/(\d+) B \((\d+)%\)'),
@@ -209,7 +212,7 @@ def evaluate(ev, host=None):
         add('A4', 'AI→RTOS', 'Speed cap falls as the person gets closer', 'PASS' if mono else 'FAIL',
             f'{len(ev.slow)} caps: ' + ', '.join(f'{d / 100:.1f} m → {v / 1000:.2f} m/s' for d, v in show))
     else:
-        add('A4', 'AI→RTOS', 'Speed cap falls as the person gets closer', 'NOT RUN', 'needs a host sending speed > 0 while a person approaches')
+        add('A4', 'AI→RTOS', 'Speed cap falls as the person gets closer', 'NOT RUN', 'drive (hibiki.sh arm, speed > 0) and walk toward the car')
 
     if ev.imu:
         g = [x['gate_us'] for x in ev.imu]
@@ -223,7 +226,7 @@ def evaluate(ev, host=None):
         add('F3', 'Fault', 'Jetson silent → safe state (watchdog)', 'PASS' if max(ev.loss) < 250 else 'FAIL',
             f"{len(ev.loss)} losses, max {max(ev.loss)} ms (target < 250 ms)" + (f', restored after {ev.restore[-1]} ms' if ev.restore else ''))
     else:
-        add('F3', 'Fault', 'Jetson silent → safe state (watchdog)', 'NOT RUN', 'needs a host that stops sending (--host)')
+        add('F3', 'Fault', 'Jetson silent → safe state (watchdog)', 'NOT RUN', 'run hibiki.sh freeze on the Jetson (or --host)')
     add('F4', 'Fault', 'Jetson command → verdict + actuation', *metric_check(ev, 'gate_cmd_verdict'))
     for cid, key, title, hint in (('F5', 'unsafe', 'Out-of-envelope command (40° steering) → VETO', 'VETO'),
                                   ('F6', 'replay', 'Replayed old sequence numbers → rejected', 'replay'),
@@ -335,6 +338,27 @@ def live(a):
             print(bad('  No output from the board. Check the port and that BOOT0/BOOT1 are both left.'))
             return 2
     print(ok('     board is talking') + dim('   (the metrics table comes every 10 s)'))
+    if a.watch:
+        print(acc('\n  Watching the STM32. Drive the car from the Jetson now (see README), then press Ctrl+C for the report.'))
+        print(dim('  Events appear below as they happen: person stops, speed caps, IMU, MPU, Jetson faults.\n'))
+        try:
+            while True:
+                time.sleep(0.5)
+        except KeyboardInterrupt:
+            print(dim('\n  … waiting 11 s for the last metrics table'))
+            n0 = ev.snapshot()['metrics']
+            t0 = time.monotonic()
+            last = dict(ev.metrics)
+            while time.monotonic() - t0 < 11 and ev.metrics == last:
+                time.sleep(0.3)
+        con.stop = True
+        R = evaluate(ev, None)
+        for i, r in enumerate(R):                   # --watch: the Jetson is the host, not this PC
+            if r[0] in ('F5', 'F6', 'F7') and r[3] == 'NOT RUN':
+                R[i] = (r[0], r[1], r[2], 'NOT RUN', 'needs pc_host.py on a USB-TTL (--host), not part of the car run')
+        print_report(R, out)
+        print(dim(f'\n  report → {os.path.relpath(out)}/report.md'))
+        return 0
     wait_for(lambda: ev.fps and ev.metrics.get('ctx_switch') and ev.stack, 40, '  2. Collecting RTOS metrics (up to 40 s)…', allow_skip=False)
 
     host_res = {}
@@ -390,13 +414,25 @@ def list_ports():
         print(f'    {p.device:<28} {p.description}{tag}')
 
 
+def _stop_like_ctrl_c(signum, frame):
+    raise KeyboardInterrupt
+
+
 def main():
+    import signal
+    for sig in ('SIGTERM', 'SIGHUP', 'SIGBREAK'):          # also finish cleanly when the window is closed
+        if hasattr(signal, sig):
+            try:
+                signal.signal(getattr(signal, sig), _stop_like_ctrl_c)
+            except (ValueError, OSError):
+                pass
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument('--offline', metavar='LOG', help='evaluate a recorded console log instead of a live board')
     ap.add_argument('--console', help='ST-LINK console port (default: found automatically)')
     ap.add_argument('--host', help='USB-TTL port wired to D0/D1: the PC plays the Jetson and injects faults')
     ap.add_argument('--speed', type=float, default=0.0, help='speed the host commands [m/s] (default 0: nothing moves)')
     ap.add_argument('--wait', type=int, default=60, help='seconds to wait for each hands-on check (default 60)')
+    ap.add_argument('--watch', action='store_true', help='just watch the board until Ctrl+C (use while driving the car from the Jetson)')
     ap.add_argument('--list-ports', action='store_true')
     ap.add_argument('--verbose', action='store_true', help='also print the host verdict counters')
     a = ap.parse_args()

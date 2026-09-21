@@ -7,139 +7,90 @@
 TRON Programming Contest 2026 — RTOS Application, Student division. Theme: *TRON × AI*.
 Team (Yonsei University): Yun-sang Nam (system architecture), Min-jun Song (control / RTOS), Na-yeon Kwak (AI).
 
-## Quick start for judges — step by step
+## Run it on the car
 
-You can check our results in three levels. Level 1 needs nothing but a PC; level 2 needs the board we ship; level 3 adds the USB-TTL cable from the kit.
+The car arrives fully wired: cable colours and pins are in [hw/wiring.md](hw/wiring.md). You need a laptop (Windows, macOS or Linux) and a Wi-Fi network for the Jetson. Keep the car on its stand, wheels off the ground, for the first run.
 
-| Level | Needs | Time | What you verify |
-|---|---|---|---|
-| **1. No hardware** | any PC with Python 3.8+ | 5 min | our recorded runs → the same PASS/FAIL table and graphs as in this README |
-| **2. The board** | STM32N6570-DK (pre-flashed) + USB-C cable | 10 min | μT-Kernel boot, task set, timing metrics, person stop, MPU fault injection, IMU tilt stop |
-| **3. Board + USB-TTL** | + 3.3 V USB-TTL on D0/D1/GND | +5 min | your PC plays the Jetson: command checks, watchdog, unsafe / replayed / corrupted commands |
-
-### Step 1 — Install Python, Git and pyserial
-
-**Windows 10/11** (PowerShell):
-
-```powershell
-winget install -e --id Python.Python.3.12
-winget install -e --id Git.Git
-# reopen PowerShell, then:
-git clone https://github.com/gkgk0119gmail-arch/guardian-tron.git
-cd guardian-tron
-py -m venv .venv
-.venv\Scripts\activate
-pip install -r sw\requirements.txt
-```
-
-If the board's serial port does not appear in step 3, install the ST-LINK driver [STSW-LINK009](https://www.st.com/en/development-tools/stsw-link009.html) (it also comes with STM32CubeProgrammer).
-
-**macOS** (Terminal, with [Homebrew](https://brew.sh)):
+### 1. Laptop: install once
 
 ```bash
-brew install python git
+# macOS (Homebrew):   brew install python git
+# Ubuntu / Debian:    sudo apt install -y python3 python3-venv git && sudo usermod -aG dialout $USER   (log out and in once)
+# Windows 10/11:      winget install -e --id Python.Python.3.12 ; winget install -e --id Git.Git   (then reopen the terminal)
+
 git clone https://github.com/gkgk0119gmail-arch/guardian-tron.git
 cd guardian-tron
-python3 -m venv .venv
-source .venv/bin/activate
-pip install -r sw/requirements.txt
+python3 -m venv .venv                  # Windows: py -m venv .venv
+source .venv/bin/activate              # Windows: .venv\Scripts\activate
+pip install -r sw/requirements.txt     # pyserial, matplotlib, numpy
 ```
 
-**Ubuntu / Debian**:
+On Windows, write `python` instead of `python3` in the commands below. If the board's serial port does not show up, install the ST-LINK driver [STSW-LINK009](https://www.st.com/en/development-tools/stsw-link009.html).
+
+### 2. Power up
+
+1. On the STM32 board, check the two BOOT switches: **BOOT0 left, BOOT1 left** (boot from flash, as shipped).
+2. Plug your laptop's USB-C cable into the board's **ST-LINK USB-C** port. It powers the board and carries its console. If the car's 5 V converter cable is in that port, take it out first.
+3. Connect the battery (XT60). The STM32's LCD shows the camera image after about 5 s. The Jetson needs about 1 min to boot.
+
+### 3. Put the Jetson on your Wi-Fi and find its IP
+
+With a monitor and a keyboard on the Jetson, log in as `orin` (the password is in the shipping note) and run:
 
 ```bash
-sudo apt install -y python3 python3-venv git
-sudo usermod -aG dialout $USER        # serial port access; log out and in once
-git clone https://github.com/gkgk0119gmail-arch/guardian-tron.git
-cd guardian-tron
-python3 -m venv .venv
-source .venv/bin/activate
-pip install -r sw/requirements.txt
+nmcli device wifi connect "<your SSID>" password "<your Wi-Fi password>"
+hostname -I          # e.g. "192.168.0.5 192.168.1.23 172.17.0.1"
 ```
 
-All commands below are run from the `guardian-tron` folder with the `.venv` active. On Windows write `python` instead of `python3` and `\` instead of `/` in paths.
+Use the address that is neither `192.168.0.5` (the Jetson's private link to the LiDAR) nor `172.17.0.1` (Docker): here `192.168.1.23`. Your laptop must be on the same Wi-Fi.
 
-### Step 2 — Level 1: reproduce our results without hardware
-
-The firmware prints every measurement on its console. We recorded the console of every run (`sw/results/raw_logs/`). The evaluator reads such a log and judges each claim:
+### 4. Terminal 1 (laptop): watch the STM32
 
 ```bash
-# the controlled run: person stops + Jetson at 100 % CPU + Jetson frozen for 1.5 s
+python3 sw/examples/hibiki_eval.py --watch
+```
+
+It finds the board's console by itself (`--list-ports` shows the ports) and prints every safety event as it happens. Leave it running.
+
+### 5. Terminal 2 (laptop): drive the car from the Jetson
+
+```bash
+ssh orin@<Jetson IP>
+~/guardian/hibiki.sh start 0.3         # ROS 2 stack: LiDAR, planner, command bridge to the STM32 (0.3 m/s)
+~/guardian/hibiki.sh arm               # the wheels turn: every command now goes through the STM32
+```
+
+Now do the following, one at a time, and watch Terminal 1:
+
+| Do | Terminal 1 shows |
+|---|---|
+| walk toward the camera from about 4 m | `[gate] SLOW: person ~300 cm ahead … speed cap …`, then `[gate] STOP #n: PERSON AHEAD … detect->gate 30 us`. The wheels stop; they turn again 1.5 s after you step away. A real person is needed: the model does not detect mannequins |
+| press the blue **USER1** button on the STM32 board | `[gate] STOP: MPU blocked a write to gatekeeper memory by task 6`: the AI task tried to write safety memory, the MPU refused, the car stops for 3 s |
+| lift the car or tilt it by more than 30° | `[gate] STOP: IMU TILT (-33 deg) … detect->gate 1 us` |
+| in Terminal 2: `~/guardian/hibiki.sh stress 30`, then walk in front again | the same stops at the same ~30 µs while the Jetson's 6 cores run at 100 % |
+| in Terminal 2: `~/guardian/hibiki.sh freeze` | `[fault] Jetson silent for 210 ms (watchdog 200 ms) -> safe state`, then `[fault] Jetson link restored …` |
+
+Finish with:
+
+```bash
+~/guardian/hibiki.sh stop              # Terminal 2
+```
+
+Then press **Ctrl+C in Terminal 1**. It waits for the board's last metrics table and prints the PASS / FAIL table: context switch, interrupt latency, 100 Hz monitor jitter, NPU rate, person → brake, speed cap, IMU, MPU, watchdog and command checks. A copy is saved in `sw/examples/out/<date_time>/` with the raw console log.
+
+`~/guardian/hibiki.sh status` shows what the Jetson's bridge sees (commands sent, approved, vetoed, round-trip time). `~/guardian/hibiki.sh start 0.5 gap` drives with the LiDAR gap follower instead of straight at constant speed.
+
+### Without the car
+
+Every run above was recorded (`sw/results/raw_logs/`). The same evaluator re-judges a recording, and the graphs in this README are redrawn from the same logs:
+
+```bash
 python3 sw/examples/hibiki_eval.py --offline sw/results/raw_logs/run_A_person_stress_freeze/stm32.log
-
-# fault injection on the car: MPU-blocked write, IMU tilt stop
 python3 sw/examples/hibiki_eval.py --offline sw/results/raw_logs/run_D_mpu_imu_faults/stm32.log
-
-# 1.2 m/s on the floor: the speed cap falls as a person approaches, then the stop
-python3 sw/examples/hibiki_eval.py --offline sw/results/raw_logs/run_H_film_1p2/stm32.log
-
-# redraw every graph in this README from the same logs
 python3 sw/results/make_figures.py
 ```
 
-Expected output of the first command (abridged):
-
-```
-  ID  Area     Check                                                   Result   Measured
-  E2  RTOS     Context switch (tk_wup_tsk → task running)              PASS     n=2,000  p50 412 ns  p99 412 ns  max 878 ns  (target < 5.7 µs)
-  E3  RTOS     UART interrupt → gatekeeper task                        PASS     n=72,257  p50 468 ns  p99 1.17 µs  max 6.08 µs  (target < 50 µs)
-  E4  RTOS     100 Hz safety monitor period jitter (NPU at full load)  PASS     n=9,783  p50 138 ns  p99 2.34 µs  max 23.2 µs  (target < 100 µs)
-  A3  AI→RTOS  Person ahead → brake issued (μT-Kernel preemption)      PASS     6 stops, decision → brake mean 30.2 µs, max 31 µs (target < 100 µs)
-  F3  Fault    Jetson silent → safe state (watchdog)                   PASS     1 losses, max 210 ms (target < 250 ms)
-  ...
-  12 PASS   0 FAIL   5 not run   1 info
-```
-
-The floor runs (`run_F` … `run_I`) show two FAIL lines on purpose: see [Known issue](#known-issue-rare-monitor-jitter-spikes).
-
-### Step 3 — Level 2: the board
-
-1. Check the two BOOT switches on the board: **BOOT0 left, BOOT1 left** (boot from flash, as shipped).
-2. Connect the **ST-LINK USB-C port** to your PC. The LCD shows the camera image after about 5 s.
-3. Run the guided evaluation. It finds the ST-LINK console port by itself:
-
-   ```bash
-   python3 sw/examples/hibiki_eval.py --list-ports    # optional: shows the port it will use
-   python3 sw/examples/hibiki_eval.py
-   ```
-
-4. The script collects the RTOS metrics for about 40 s, then asks you to do three things. Each waits up to 60 s. Press Enter to skip one.
-   - **a)** walk into the camera view and stop within about 2 m. It must be a real person; the model does not detect mannequins.
-   - **b)** press the blue **USER1** button. The AI task then tries to write gatekeeper memory, and the MPU must block it.
-   - **c)** tilt the board by more than 30° for a moment.
-5. You get the PASS / FAIL table. A copy is saved in `sw/examples/out/<date_time>/report.md`, next to the raw console log.
-
-No output? Press the black **RESET** button once while the script is waiting. Any serial terminal works as well: 115200 baud, 8N1, on the ST-LINK port.
-
-### Step 4 — Level 3: your PC plays the Jetson
-
-Wire the 3.3 V USB-TTL adapter to the Arduino header. **Leave its 5 V pin unconnected.**
-
-| USB-TTL | Board (Arduino header) |
-|---|---|
-| TXD | D0 (PF6, USART2 RX) |
-| RXD | D1 (PD5, USART2 TX) |
-| GND | GND |
-
-```bash
-python3 sw/examples/hibiki_eval.py --list-ports              # find the USB-TTL port
-python3 sw/examples/hibiki_eval.py --host COM5               # Windows example
-python3 sw/examples/hibiki_eval.py --host /dev/ttyUSB0       # Linux example (macOS: /dev/cu.usbserial-*)
-```
-
-The PC now sends the Jetson's 100 Hz drive commands (speed 0 by default, so nothing moves) and injects four faults, one after the other: 40° steering, replayed sequence numbers, corrupted frames and a 1.5 s silence. The table then also fills the command, watchdog and fault rows. The same scenarios can be run one by one with `sw/tools/pc_host.py --port <port> --scenario freeze|unsafe|replay|garbage`.
-
-### Step 5 — Optional: rebuild and reflash the firmware
-
-This is not needed to evaluate: the board is shipped flashed, and `sw/binaries/` holds the same images with SHA-256 sums. To build from source, see [sw/docs/setup_guide.md](sw/docs/setup_guide.md). In short, with STM32CubeIDE 2.1 or later and STM32CubeProgrammer 2.21 or later installed:
-
-```bash
-cd sw
-git clone --depth 1 -b v2.3.1 https://github.com/STMicroelectronics/STM32N6-GettingStarted-ObjectDetection.git st_od_ref
-cd guardian_vision && make -j8 && make sign       # -> build/guardian_sign.bin
-```
-
-Then flash it with STM32CubeProgrammer as described in the setup guide (BOOT1 right while flashing, then back left).
+To rebuild and reflash the firmware (not needed for evaluation: the board is shipped flashed, and `sw/binaries/` holds the same images), see [sw/docs/setup_guide.md](sw/docs/setup_guide.md).
 
 ## How it works
 
@@ -151,6 +102,7 @@ Every drive command goes through an **STM32N6570-DK running μT-Kernel 3.0**. Th
 | `gate` | 8 | Checks every Jetson command (CRC, replay, steering/speed envelope) and drives the VESC motor controller. Brakes on any hazard | 200 ms without a valid command → brake |
 | `imu` | 10 | 100 Hz cyclic safety monitor: IMU + Kalman filter → impact (> 2.5 g) and tilt (> 30°) hazards | — |
 | `vision` | 20 | Camera → **YOLOX-nano on the Neural-ART NPU** (15 fps) → person in the corridor: slow down with distance, stop within 2 m | no frame for 500 ms → car held |
+| `report` | 25 | Console reports: metrics table, CPU share, status line | a late report, nothing else |
 | `log` | 30 | Non-blocking console output | drops, never blocks |
 
 The NPU result reaches the brake through μT-Kernel preemption: the vision task raises the hazard, the gate task preempts it, and the brake command is issued **30 µs** later.
@@ -199,7 +151,7 @@ flowchart LR
 | Hazard detected → brake issued | < 100 µs | **34 µs** (person stops: mean 30.1 µs; IMU tilts: 1 µs; n = 62) |
 | USART interrupt → gatekeeper task | < 50 µs | **6.1 µs** (p99 1.2 µs, n = 72 257) |
 | Jetson command → verdict + actuation | < 1 ms | **15.5 µs** (p99 9.6 µs, n = 4 538) |
-| 100 Hz monitor period jitter (NPU at full load, Jetson at 100 % CPU) | 42 % below Linux | **23 µs** in the controlled run (p99 2.3 µs, n = 9 783), 99.3 % below Linux under the same load (3.3–3.9 ms). Over all floor runs (n = 121 034): p99 4.7 µs, **max 817 µs**; see [Known issue](#known-issue-rare-monitor-jitter-spikes) |
+| 100 Hz monitor period jitter (NPU at full load) | 42 % below Linux | **12.5 µs** over 141 054 periods (23.5 min, p99 2.9 µs, 0 over 100 µs) with the Jetson commanding at 100 Hz; 23 µs with the Jetson at 100 % CPU. Linux on the Jetson under load: 3.3–3.9 ms (≥ 99.3 % lower). See [Fixed issue](#fixed-issue-rare-monitor-jitter-spikes) |
 | Jetson frozen → car in safe state | < 250 ms | **210 ms** (n = 7, watchdog 200 ms) |
 | Camera frame → person decision | < 100 ms | 31.4 ms (NPU 28.5 ms) |
 | CPU used by the safety tasks (gate + imu) | < 3 % | 3.4 % |
@@ -237,11 +189,9 @@ All numbers are printed by the firmware itself (DWT cycle counter, 1.25 ns resol
 | [sw/docs/test_report.md](sw/docs/test_report.md) | Measurement method and results |
 | [sw/docs/third_party_software.md](sw/docs/third_party_software.md) | Third-party software, models, datasets and licenses |
 
-## Known issue: rare monitor jitter spikes
+## Fixed issue: rare monitor jitter spikes
 
-In the long floor runs recorded while filming (`sw/results/raw_logs/run_F…run_I`, 121 034 monitor periods), **20 periods (0.017 %)** started 0.1–0.82 ms late, and the longest monitor step took 1.14 ms (target 1 ms). The 10 ms deadline was never missed: the worst period was 10.82 ms from start to start, and every step finished long before the next release. The short controlled runs on the stand (`run_A…run_E`) show no such spike.
-
-Most likely cause, found while writing the evaluator: every 10 s the `gate` task (priority 8, above the `imu` monitor at 10) computes the percentile table and formats about 12 console lines, which takes roughly 0.5–0.8 ms. When that burst coincides with a monitor release it delays the start, and when it lands inside a step it stretches the step. The fix is to move the report into a low-priority task. It is written but not yet re-measured, so the published numbers and binaries are still from the firmware described here.
+The first long runs on the car (`sw/results/raw_logs/run_F…run_I`, 121 034 monitor periods) had 20 periods (0.017 %) that started 0.1–0.82 ms late, and a longest monitor step of 1.14 ms. No 10 ms deadline was missed. Cause: every 10 s the `gate` task (priority 8, above the `imu` monitor at 10) computed the percentile table and formatted the console report itself, a 0.5–0.8 ms burst. The reports now come from a separate `report` task at priority 25, below every safety task. With that firmware (`run_J`, and the flashed image in `sw/binaries/`): **0 of 141 054 periods over 100 µs, max 12.5 µs, longest step 434 µs**. The older logs are kept unchanged, so `hibiki_eval.py --offline` on `run_F…run_I` still shows the two FAIL lines.
 
 ## Repository layout
 
