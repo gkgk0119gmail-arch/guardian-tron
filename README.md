@@ -56,7 +56,24 @@ hostname -I          # e.g. "192.168.0.5 192.168.1.23 172.17.0.1"
 
 Use the address that is neither `192.168.0.5` (the Jetson's private link to the LiDAR) nor `172.17.0.1` (Docker): here `192.168.1.23`. Your laptop must be on the same Wi-Fi.
 
-### 4. Terminal 1 (laptop): watch the STM32
+### 4. Open two terminals on the laptop
+
+Both terminals run **on your laptop**. Only terminal 2 logs into the Jetson with `ssh`.
+
+```
+ your laptop
+ ┌──────────────────────────────────┐      USB-C cable
+ │ Terminal 1                       │ ───────────────────▶ STM32 board
+ │   python3 sw/examples/           │  (runs on the laptop, no ssh)
+ │       hibiki_eval.py --watch     │
+ ├──────────────────────────────────┤      Wi-Fi
+ │ Terminal 2                       │ ───────────────────▶ Jetson
+ │   ssh orin@<Jetson IP>           │  (only this one uses ssh)
+ │   ~/guardian/hibiki.sh start …   │
+ └──────────────────────────────────┘
+```
+
+#### Terminal 1 (on the laptop, not ssh): watch the STM32
 
 ```bash
 python3 sw/examples/hibiki_eval.py --watch
@@ -64,7 +81,7 @@ python3 sw/examples/hibiki_eval.py --watch
 
 It finds the board's console by itself (`--list-ports` shows the ports) and prints every safety event as it happens. Leave it running.
 
-### 5. Terminal 2 (laptop): drive the car from the Jetson
+#### Terminal 2 (on the laptop, then ssh into the Jetson): drive the car
 
 ```bash
 ssh orin@<Jetson IP>
