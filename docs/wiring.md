@@ -1,3 +1,0 @@
-# wiring
-
-_TODO_

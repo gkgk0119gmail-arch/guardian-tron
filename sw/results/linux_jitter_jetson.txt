@@ -1,0 +1,7 @@
+# Jetson Orin Nano, L4T R36.4.7, 2026-09-21T22:31:40+09:00
+## idle
+rel n=2000 period-error ns: min 23488 p50 63040 p99 80001 p99.9 268135 max 308008 | mean 65751 rms 66441
+abs n=2000 period-error ns: min -293834 p50 -193 p99 15967 p99.9 79649 max 305736 | mean 31 rms 10514
+## under stress --cpu 6 --io 2 --vm 2 --vm-bytes 256M
+rel n=2000 period-error ns: min 25151 p50 64705 p99 151139 p99.9 3274269 max 3337470 | mean 72640 rms 128056
+abs n=2000 period-error ns: min -222663 p50 -97 p99 44512 p99.9 121922 max 234629 | mean 28 rms 15690

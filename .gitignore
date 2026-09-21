@@ -11,14 +11,20 @@
 *.su
 *.cyclo
 # local tooling / large references (not part of the submission)
-tools/.venv/
-st_od_ref/
+**/tools/.venv/
+**/st_od_ref/
+**/demo_logs/
 *.zip
 # python
 __pycache__/
 *.pyc
 # demo keys from the threat-model scripts
-jetson_stack/jetson/threats/keys/
+**/jetson_stack/jetson/threats/keys/
 # IDE / OS
 .DS_Store
 .metadata/
+
+# ready-to-flash images and measurement results are part of the submission
+!sw/binaries/
+!sw/binaries/*
+!sw/results/**
