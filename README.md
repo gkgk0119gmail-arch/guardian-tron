@@ -1,5 +1,7 @@
 # HIBIKI / Guardian-TRON
 
+<p align="center"><img src="hw/photos/vehicle_main.jpg" width="560" alt="Guardian-TRON: F1TENTH car with the Jetson Orin Nano, VESC and the STM32N6570-DK showing the live camera image with the μT-Kernel 3.0 + NPU overlay"></p>
+
 **A μT-Kernel 3.0 safety co-processor that stops an autonomous car for a person 30 µs after its on-board NPU sees them, even when the AI computer is overloaded or has frozen.**
 
 TRON Programming Contest 2026 — RTOS Application, Student division. Theme: *TRON × AI*.
@@ -22,25 +24,9 @@ The Jetson is not in this loop. An MPU keeps the AI task from writing gatekeeper
 
 The car with the top deck removed. The LiDAR and the Jetson plan the path. The STM32N6570-DK running μT-Kernel 3.0 checks every drive command before anything reaches the VESC.
 
-<p align="center"><img src="hw/photos/vehicle_top.jpg" width="420" alt="Guardian-TRON seen from above: LiDAR, Jetson, VESC and the STM32N6570-DK with the camera image on its LCD"></p>
+![Guardian-TRON inside: numbered parts](hw/photos/vehicle_bom.png)
 
-| # | Part | Role |
-|---|---|---|
-| 1 | Hokuyo UST-10LX 2D LiDAR | Jetson's main sensor: Ethernet 192.168.0.10, path planning and obstacle avoidance |
-| 2 | Jetson Orin Nano | Main AI computer: ROS 2 Humble, gap_follower. **No direct connection to the actuators** |
-| 3 | USB-TTL adapter (PL2303) | Jetson ↔ STM32 command link: UART 115200, 15-byte CMD / 12-byte VERDICT at 100 Hz |
-| 4 | **STM32N6570-DK · μT-Kernel 3.0** | Safety gatekeeper: command envelope, 200 ms watchdog, NPU person stop, IMU monitor, MPU isolation. The LCD shows the camera |
-| 5 | Camera module MB1854 | IMX335 5 MP + 8×8 ToF + IMU: the STM32's own perception, independent of the Jetson (CSI-2 / I²C) |
-| 6 | VESC COMM harness | STM32 → VESC, UART 38400: red D5 → RX, brown A5 ← TX, black GND |
-| 7 | VESC 6 MkVI HP | Motor controller: BLDC drive + steering servo output. **Only the STM32 can command it** |
-| 8 | 1/10 4WD RC chassis | BLDC motor and steering servo under the deck. Wheelbase 0.32 m, steering capped at ±17.5° |
-| 9 | 4S LiPo (XT60) | Main power, 14.8 V |
-| 10 | WAGO 221 splitters | Battery +/− to the Jetson, LiDAR and 5 V converter |
-| 11 | STM32 power, USB-C | 5 V into the ST-LINK port (CN6). On the car: 6–24 V → 5 V 3 A buck converter |
-| 12 | USB hub + Wi-Fi adapter | SSH and monitoring of the Jetson only, not in the control path |
-| 13 | STMod+ fan-out board | Comes with the DK; not used |
-
-Full bill of materials with the numbered photo: [hw/README.md](hw/README.md). Pins and baud rates: [hw/wiring.md](hw/wiring.md).
+Bill of materials with quantities and evaluation needs: [hw/README.md](hw/README.md). Pins and baud rates: [hw/wiring.md](hw/wiring.md).
 
 ### Control signal path
 
