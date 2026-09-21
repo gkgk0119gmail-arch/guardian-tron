@@ -1,12 +1,12 @@
-"""위협② 차내 네트워크 인젝션/스푸핑 유사 공격.
+"""Threat 2: in-vehicle network injection/spoofing-style attacks.
 
-실제 CAN 버스가 아니라 Jetson<->STM32 안전 임계 UDP 링크(실제 배선은
-이더넷)에 대해, 메인 ECU 프로세스를 거치지 않고 다음을 직접 주입한다:
-  (a) 위험한 절댓값/변화율을 가진 위조 CMD 프레임 (스푸핑)
-  (b) 이미 사용된 낮은 seq 번호의 재전송 (리플레이)
-  (c) CRC/프레이밍이 깨진 임의 바이트열 (퍼징/DoS 성격)
-게이트키퍼는 안전포락선 위반, seq 역행, CRC 실패를 각각 독립적으로 방어해야
-한다 (gatekeeper_core.c 의 n_veto / n_malformed / n_replay_or_reorder 집계).
+Instead of a real CAN bus, this targets the Jetson<->STM32 safety-critical UDP
+link (Ethernet in the real wiring), bypassing the main ECU process to inject:
+  (a) forged CMD frames with dangerous absolute values/rates (spoofing)
+  (b) retransmissions with already-used low seq numbers (replay)
+  (c) random bytes with broken CRC/framing (fuzzing/DoS-like)
+The gatekeeper must independently defend against envelope violations, seq
+regression and CRC failures (n_veto / n_malformed / n_replay_or_reorder in gatekeeper_core.c).
 """
 from __future__ import annotations
 

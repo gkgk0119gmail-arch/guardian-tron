@@ -12,7 +12,7 @@ typedef struct {
     uint32_t last_rx_time_us;
     int has_last_rx_time;
 
-    /* stats, mirrors <표 2>/<표 4> of the paper */
+    /* stats, mirrors <Table 2>/<Table 4> of the paper */
     uint64_t n_total;
     uint64_t n_approved;
     uint64_t n_veto;

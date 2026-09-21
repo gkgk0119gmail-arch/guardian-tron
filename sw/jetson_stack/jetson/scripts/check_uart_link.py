@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
-"""USB-TTL <-> STM32 물리 연결 확인용 간단 스크립트.
+"""Simple check of the USB-TTL <-> STM32 physical link.
 
-사용법:
-  python3 jetson/scripts/check_uart_link.py [포트] [보레이트]
-  기본값: /dev/ttyUSB0, 115200
+Usage:
+  python3 jetson/scripts/check_uart_link.py [port] [baud]
+  Defaults: /dev/ttyUSB0, 115200
 
-정상(펌웨어 없는 상태)이면: idle 구간에 아무것도 안 옴 (0바이트).
-뭔가 계속 반복되는 바이트가 온다면 배선/GND 문제입니다.
+Normal (no firmware): nothing arrives during idle (0 bytes).
+If repeating bytes keep arriving, it is a wiring/GND problem.
 """
 import sys
 import time

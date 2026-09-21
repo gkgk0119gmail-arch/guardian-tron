@@ -1,14 +1,15 @@
-"""위협③ OTA 펌웨어 침해 — 신뢰루트(RoT) 시뮬레이션.
+"""Threat 3: OTA firmware tampering — Root of Trust (RoT) simulation.
 
-실기판에서는 STM32N6 부트 ROM이 FSBL 서명 헤더를 검증하지만, CubeProgrammer
-없이는 실제 보안 부팅 파이프라인을 여기서 재현할 수 없다 (docs/STM32_PORT.md
-참조). 대신 그 검증 로직(서명 부착 -> 검증 -> 부정 이미지 로드 거부)을 실제
-Ed25519 서명으로 그대로 구현해서, "OEM 서명 키가 없는 공격자가 변조한 펌웨어는
-부팅 전 단계에서 거부된다"는 신뢰루트의 핵심 보장을 실측 검증한다.
+On the real board the STM32N6 boot ROM verifies the FSBL signature header, but
+without CubeProgrammer the actual secure-boot pipeline cannot be reproduced here
+(see docs/STM32_PORT.md). Instead, the same verification logic (sign -> verify ->
+reject invalid image) is implemented with real Ed25519 signatures, to measure the
+core RoT guarantee: "firmware tampered by an attacker without the OEM signing key
+is rejected before boot".
 
-키는 최초 실행 시 jetson/threats/keys/ 에 생성되어 재사용된다. 이 디렉터리의
-oem_signing_key.pem 은 "OEM 서명 키"에 해당하며 실배포에서는 게이트키퍼
-빌드 파이프라인 밖(HSM 등)에 있어야 한다 -- 데모 편의상 로컬에 둔 것뿐이다.
+Keys are generated in jetson/threats/keys/ on first run and reused. The
+oem_signing_key.pem there is the "OEM signing key"; in a real deployment it must
+live outside the gatekeeper build pipeline (e.g. an HSM) -- it is local only for the demo.
 """
 from __future__ import annotations
 
@@ -27,7 +28,7 @@ PRIV_PATH = KEY_DIR / "oem_signing_key.pem"
 PUB_PATH = KEY_DIR / "oem_signing_key.pub"
 
 HEADER_MAGIC = b"FSBL"
-HEADER_VERSION = 2  # mirrors paper's "헤더 버전 2.3" in spirit, simplified here
+HEADER_VERSION = 2  # mirrors paper's "header version 2.3" in spirit, simplified here
 
 
 def ensure_keys() -> tuple[Ed25519PrivateKey, Ed25519PublicKey]:

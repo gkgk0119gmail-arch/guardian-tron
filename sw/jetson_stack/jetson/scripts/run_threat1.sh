@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# 위협① FGSM 적대적 인지공격 시연.
+# Threat 1 demo: FGSM adversarial perception attack.
 set -euo pipefail
 source "$(dirname "${BASH_SOURCE[0]}")/_common.sh"
 

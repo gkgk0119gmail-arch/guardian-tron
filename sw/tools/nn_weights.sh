@@ -20,8 +20,8 @@ for off in 0 262144 524288 786432 $((SIZE-65536)); do
   dd if="$BIN_REF" of="$TMP/r.bin" bs=1 skip=$off count=65536 2>/dev/null
   cmp -s "$TMP/c.bin" "$TMP/r.bin" || ok=0
 done
-if [ $ok = 1 ]; then echo "✅ 가중치 일치 (5 x 64 KB spot check @0x70380000) — 이제 보드 전원 완전히 껐다 켜기"; exit 0; fi
-echo "⚠️  플래시 가중치가 다름/없음"
-[ "${1:-}" = "--write" ] || { echo "   굽기: $0 --write"; exit 2; }
+if [ $ok = 1 ]; then echo "✅ weights match (5 x 64 KB spot check @0x70380000) — now fully power-cycle the board"; exit 0; fi
+echo "⚠️  flash weights differ/missing"
+[ "${1:-}" = "--write" ] || { echo "   to program: $0 --write"; exit 2; }
 "$HERE/.venv/bin/python" "$HERE/stlink_reset.py" >/dev/null || true
 "$CP" -c port=SWD mode=UR ap=1 -el "$EL" -w "$HEX" -v 2>&1 | sed 's/\x1b\[[0-9;]*m//g' | grep -E "Error|Download|verified|elapsed" | head -5

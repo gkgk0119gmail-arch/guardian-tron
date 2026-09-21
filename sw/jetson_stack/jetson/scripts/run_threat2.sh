@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# 위협② 링크 인젝션/스푸핑/리플레이 시연.
+# Threat 2 demo: link injection/spoofing/replay.
 set -euo pipefail
 source "$(dirname "${BASH_SOURCE[0]}")/_common.sh"
 

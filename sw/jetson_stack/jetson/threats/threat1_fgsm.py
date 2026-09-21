@@ -1,9 +1,9 @@
-"""위협① 적대적 인지공격 (FGSM) — 실제 인지 신경망을 공격해 위험 조향을
-유발하고, STM32 게이트키퍼가 실시간으로 veto하는지 실측한다.
+"""Threat 1: adversarial perception attack (FGSM) — attack the real perception
+network to induce dangerous steering, and measure whether the STM32 gatekeeper vetoes it in real time.
 
-논문 식 (6): x_adv = x + eps * sign(grad_x J(theta, x, y))
-여기서는 clean 예측을 y로 써서 (untargeted) 모델 출력을 그 예측으로부터
-멀어지게 미는 방향으로 교란을 가한다.
+Paper eq. (6): x_adv = x + eps * sign(grad_x J(theta, x, y))
+Here the clean prediction is used as y (untargeted), and the perturbation pushes
+the model output away from that prediction.
 """
 from __future__ import annotations
 

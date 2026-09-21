@@ -3,7 +3,7 @@
 Every control cycle: render/capture a frame -> perception model predicts
 steering -> combine with a simple cruise-accel rule -> send CMD frame to the
 STM32 gatekeeper over the safety-critical link -> read back the VERDICT and
-log it. This mirrors 게이트키퍼 펌웨어 동작 흐름 in the paper (Ⅳ.2).
+log it. This mirrors the gatekeeper firmware operation flow in the paper (Ⅳ.2).
 
 Transport is UDP over Ethernet by default, matching the actual physical link
 between this Jetson and the STM32N6570-DK (RJ45, not USB/UART) and the

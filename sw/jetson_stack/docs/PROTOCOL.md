@@ -1,47 +1,51 @@
 # Safety-Critical UART Link Protocol
 
-Jetson(메인 ECU) → STM32(게이트키퍼) 방향의 제어 명령 프레임과, 게이트키퍼 →
-Jetson 방향의 판정(verdict) 응답 프레임을 정의한다. UART는 스트림이므로
-바이트 경계를 잡기 위해 STX/ETX와 CRC8을 둔다.
+Defines the control command frame from the Jetson (main ECU) to the STM32
+(gatekeeper), and the verdict response frame from the gatekeeper to the Jetson.
+Since UART is a stream, STX/ETX and CRC8 are used to find byte boundaries.
 
-기본 설정: **115200 baud, 8N1**, 실제 배선 시 보드에 맞는 UART 포트/보레이트로
-`config.h`(STM32측) / `--baud`(Jetson측) 를 함께 맞춰야 한다.
+Default settings: **115200 baud, 8N1**. When actually wiring, `config.h` (STM32
+side) and `--baud` (Jetson side) must both be set to the UART port/baud rate
+that matches the board.
 
-## CMD 프레임 (Jetson → 게이트키퍼), 15 bytes
+## CMD frame (Jetson → gatekeeper), 15 bytes
 
-| offset | size | field | type | 설명 |
+| offset | size | field | type | description |
 |---|---|---|---|---|
-| 0 | 1 | STX | u8 | 0xAA 고정 |
-| 1 | 4 | seq | u32 LE | 송신 순번(모노토닉 증가) |
-| 5 | 4 | steer_deg | f32 LE | 조향각 (도) |
-| 9 | 4 | accel_mps2 | f32 LE | 종방향 가속 (m/s^2) |
-| 13 | 1 | crc8 | u8 | offset 1..12 에 대한 CRC-8(poly 0x07) |
-| 14 | 1 | ETX | u8 | 0x55 고정 |
+| 0 | 1 | STX | u8 | fixed 0xAA |
+| 1 | 4 | seq | u32 LE | transmit sequence number (monotonically increasing) |
+| 5 | 4 | steer_deg | f32 LE | steering angle (degrees) |
+| 9 | 4 | accel_mps2 | f32 LE | longitudinal acceleration (m/s^2) |
+| 13 | 1 | crc8 | u8 | CRC-8 (poly 0x07) over offset 1..12 |
+| 14 | 1 | ETX | u8 | fixed 0x55 |
 
-## VERDICT 프레임 (게이트키퍼 → Jetson), 12 bytes
+## VERDICT frame (gatekeeper → Jetson), 12 bytes
 
-| offset | size | field | type | 설명 |
+| offset | size | field | type | description |
 |---|---|---|---|---|
-| 0 | 1 | STX2 | u8 | 0xBB 고정 |
-| 1 | 4 | seq | u32 LE | 대응하는 CMD의 seq |
-| 5 | 1 | verdict | u8 | 0=APPROVED, 1=VETO(포락선 위반), 2=MALFORMED(CRC/파싱 실패) |
-| 6 | 4 | latency_us | u32 LE | 수신→판정 지연 (마이크로초) |
-| 10 | 1 | crc8 | u8 | offset 1..9 CRC-8 |
-| 11 | 1 | ETX2 | u8 | 0x55 고정 |
+| 0 | 1 | STX2 | u8 | fixed 0xBB |
+| 1 | 4 | seq | u32 LE | seq of the corresponding CMD |
+| 5 | 1 | verdict | u8 | 0=APPROVED, 1=VETO (envelope violation), 2=MALFORMED (CRC/parse failure) |
+| 6 | 4 | latency_us | u32 LE | receive→verdict latency (microseconds) |
+| 10 | 1 | crc8 | u8 | CRC-8 over offset 1..9 |
+| 11 | 1 | ETX2 | u8 | fixed 0x55 |
 
-## 안전포락선 (safety_envelope.c 와 동일)
+## Safety envelope (identical to safety_envelope.c)
 
-- 절댓값: `|steer_deg| <= 540`, `accel_mps2 ∈ [-10, 4]`
-- 변화율(1 사이클, 100Hz 기준): `|Δsteer_deg| <= 10`, `|Δaccel_mps2| <= 1`
-- 두 조건 중 하나라도 위반 → VETO, 직전 승인 명령(u_safe) 유지
+- Absolute: `|steer_deg| <= 540`, `accel_mps2 ∈ [-10, 4]`
+- Rate of change (1 cycle, at 100Hz): `|Δsteer_deg| <= 10`, `|Δaccel_mps2| <= 1`
+- Violation of either condition → VETO, hold the last approved command (u_safe)
 
-## 위협 시나리오와 프레임 대응
+## Threat scenarios and frame handling
 
-- **위협① 적대적 인지공격(FGSM)**: 정상 CMD 프레임과 동일한 형식이지만
-  perception이 만들어낸 위험한 steer/accel 값을 담음 → 게이트키퍼는 값 기반으로
-  포락선 검증 (프레임 자체는 정상이므로 이게 핵심 검증 대상).
-- **위협② CAN 인젝션/스푸핑 유사 공격**: UART 링크에 직접 임의/스푸핑된
-  CMD 프레임을 주입 (Jetson 프로세스를 거치지 않고 소켓/시리얼에 raw 바이트 삽입).
-  게이트키퍼는 시퀀스 이상·포락선 위반·CRC 실패를 이용해 방어.
-- **위협③ OTA/펌웨어 침해**: 게이트키퍼 바이너리 자체를 변조해 재적재를 시도 →
-  RoT(서명 검증, `firmware_sign.py` 참조)가 서명 불일치 시 로드 거부.
+- **Threat 1: adversarial perception attack (FGSM)**: same format as a normal
+  CMD frame, but carries dangerous steer/accel values produced by perception →
+  the gatekeeper validates against the envelope based on the values (the frame
+  itself is well-formed, so this is the key validation target).
+- **Threat 2: CAN injection/spoofing-like attack**: arbitrary/spoofed CMD frames
+  are injected directly onto the UART link (raw bytes inserted into the
+  socket/serial port without going through the Jetson process).
+  The gatekeeper defends using sequence anomalies, envelope violations and CRC failures.
+- **Threat 3: OTA/firmware compromise**: an attempt to reload a tampered
+  gatekeeper binary → the RoT (signature verification, see `firmware_sign.py`)
+  refuses to load it on signature mismatch.
