@@ -34,6 +34,11 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(HERE, '..', 'tools'))
 
 # --------------------------------------------------------------------------- output
+for _st in (sys.stdout, sys.stderr):              # never crash on a console code page (e.g. cp949) without µ → ─
+    try:
+        _st.reconfigure(errors='replace')
+    except Exception:
+        pass
 USE_COLOR = sys.stdout.isatty() and os.environ.get('NO_COLOR') is None
 if os.name == 'nt':
     os.system('')                                   # enables ANSI colors on Windows 10+ terminals

@@ -25,7 +25,19 @@ source .venv/bin/activate              # Windows: .venv\Scripts\activate
 pip install -r sw/requirements.txt     # pyserial, matplotlib, numpy
 ```
 
-On Windows, write `python` instead of `python3` in the commands below. If the board's serial port does not show up, install the ST-LINK driver [STSW-LINK009](https://www.st.com/en/development-tools/stsw-link009.html).
+On Windows, write `python` instead of `python3` in the commands below. The same steps in PowerShell:
+
+```powershell
+git clone https://github.com/gkgk0119gmail-arch/guardian-tron.git
+cd guardian-tron
+py -m venv .venv
+Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned   # once, if activate says "running scripts is disabled"
+.venv\Scripts\Activate.ps1
+pip install -r sw\requirements.txt
+python sw\examples\hibiki_eval.py --list-ports       # the board shows up as "STMicroelectronics STLink Virtual COM Port (COMx)"
+```
+
+If the board's COM port does not show up, install the ST-LINK driver [STSW-LINK009](https://www.st.com/en/development-tools/stsw-link009.html) and replug the cable. `ssh` is built into Windows 10/11.
 
 ### 2. Power up
 
