@@ -39,23 +39,16 @@ def cmd(seq: int, steer_deg: float, speed: float) -> bytes:
     return bytes([CMD_STX]) + body + bytes([crc8(body), ETX])
 
 
-def main() -> int:
-    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument('--port', required=True)
-    ap.add_argument('--speed', type=float, default=0.5, help='target speed [m/s] (STM32 caps at 2.0)')
-    ap.add_argument('--steer', type=float, default=0.0, help='steering [deg]')
-    ap.add_argument('--secs', type=float, default=20.0)
-    ap.add_argument('--rate', type=float, default=100.0)
-    ap.add_argument('--scenario', choices=['normal', 'freeze', 'unsafe', 'replay', 'garbage'], default='normal')
-    a = ap.parse_args()
-
-    s = serial.Serial(a.port, 115200, timeout=0)
+def run_scenario(port, scenario='normal', speed=0.5, steer=0.0, secs=20.0, rate=100.0, log=print):
+    """Play the Jetson for `secs` seconds on `port` (a device name or an open serial.Serial).
+    Returns the verdict counts, e.g. {'APPROVED': 1830, 'VETO': 190, 'MALFORMED': 0}."""
+    s = serial.Serial(port, 115200, timeout=0) if isinstance(port, str) else port
     time.sleep(0.2)
     s.reset_input_buffer()
     # the gatekeeper rejects seq <= last seen (replay protection) and keeps that across
     # host restarts: seed from the wall clock so a new run always continues above it
     seq = int(time.time() * 1000) & 0x7FFFFFFF
-    period = 1.0 / a.rate
+    period = 1.0 / rate
     t0 = time.monotonic()
     nxt = t0
     sent = {}
@@ -63,46 +56,46 @@ def main() -> int:
     lat = []
     rx = b''
     last_print = t0
-    fault_at = t0 + a.secs / 2
+    fault_at = t0 + secs / 2
     fault_done = False
-    print(f'[host] {a.port} scenario={a.scenario} speed={a.speed} m/s steer={a.steer} deg for {a.secs:.0f} s')
+    said = False
+    log(f'[host] {getattr(s, "port", port)} scenario={scenario} speed={speed} m/s steer={steer} deg for {secs:.0f} s')
 
-    while time.monotonic() - t0 < a.secs:
+    while time.monotonic() - t0 < secs:
         now = time.monotonic()
-        steer, speed, frame = a.steer, a.speed, None
-        if not fault_done and now >= fault_at and a.scenario != 'normal':
-            if a.scenario == 'freeze':
-                print('[host] FAULT: host stalls for 1.5 s (no frames) -> expect STM32 "[fault] Jetson silent"')
+        st = steer
+        if not fault_done and now >= fault_at and scenario != 'normal':
+            if scenario == 'freeze':
+                log('[host] FAULT: host stalls for 1.5 s (no frames) -> expect STM32 "[fault] Jetson silent"')
                 time.sleep(1.5)
                 fault_done = True
                 nxt = time.monotonic()
                 continue
-            if a.scenario == 'unsafe' and not getattr(main, 'said', False):
-                main.said = True
-                print('[host] FAULT: 2 s of 40 deg steering commands -> expect VETO (clamped to the 17.5 deg envelope)')
-            if a.scenario == 'replay':
-                print('[host] FAULT: replaying 50 old sequence numbers -> expect them to be rejected')
+            if scenario == 'unsafe' and not said:
+                said = True
+                log('[host] FAULT: 2 s of 40 deg steering commands -> expect VETO (clamped to the 17.5 deg envelope)')
+            if scenario == 'replay':
+                log('[host] FAULT: replaying 50 old sequence numbers -> expect them to be rejected')
                 for k in range(50):
-                    s.write(cmd(seq - 1000 + k, 0.0, a.speed))
+                    s.write(cmd(seq - 1000 + k, 0.0, speed))
                     time.sleep(period)
                 fault_done = True
-            if a.scenario == 'garbage':
-                print('[host] FAULT: 50 frames with a broken CRC + random noise -> expect MALFORMED / resync')
+            if scenario == 'garbage':
+                log('[host] FAULT: 50 frames with a broken CRC + random noise -> expect MALFORMED / resync')
                 for k in range(50):
-                    f = bytearray(cmd(seq + k, 0.0, a.speed)); f[13] ^= 0x5A
+                    f = bytearray(cmd(seq + k, 0.0, speed)); f[13] ^= 0x5A
                     s.write(bytes(f) + os.urandom(3))
                     time.sleep(period)
                 seq += 50
                 fault_done = True
-        if a.scenario == 'unsafe' and fault_at <= now < fault_at + 2.0:
-            steer = 40.0
-        elif a.scenario == 'unsafe' and now >= fault_at + 2.0:
+        if scenario == 'unsafe' and fault_at <= now < fault_at + 2.0:
+            st = 40.0
+        elif scenario == 'unsafe' and now >= fault_at + 2.0:
             fault_done = True
 
         seq += 1
-        frame = cmd(seq, steer, speed)
         sent[seq] = time.monotonic()
-        s.write(frame)
+        s.write(cmd(seq, st, speed))
 
         rx += s.read(256)
         while len(rx) >= 12:
@@ -125,13 +118,28 @@ def main() -> int:
             last_print = now
             l = sorted(lat)
             p99 = l[int(len(l) * 0.99)] if l else 0
-            print(f'[host] t={now - t0:5.1f}s sent={seq & 0xFFFF:5d} ' + ' '.join(f'{k}={v}' for k, v in counts.items())
-                  + (f' | round trip avg {sum(l) / len(l):.2f} ms p99 {p99:.2f} ms' if l else ' | no verdicts yet'))
+            log(f'[host] t={now - t0:5.1f}s sent={seq & 0xFFFF:5d} ' + ' '.join(f'{k}={v}' for k, v in counts.items())
+                + (f' | round trip avg {sum(l) / len(l):.2f} ms p99 {p99:.2f} ms' if l else ' | no verdicts yet'))
             lat.clear()
         nxt += period
         time.sleep(max(0.0, nxt - time.monotonic()))
 
-    print('[host] done: ' + ' '.join(f'{k}={v}' for k, v in counts.items()))
+    log('[host] done: ' + ' '.join(f'{k}={v}' for k, v in counts.items()))
+    if isinstance(port, str):
+        s.close()
+    return counts
+
+
+def main() -> int:
+    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    ap.add_argument('--port', required=True)
+    ap.add_argument('--speed', type=float, default=0.5, help='target speed [m/s] (STM32 caps at 2.0)')
+    ap.add_argument('--steer', type=float, default=0.0, help='steering [deg]')
+    ap.add_argument('--secs', type=float, default=20.0)
+    ap.add_argument('--rate', type=float, default=100.0)
+    ap.add_argument('--scenario', choices=['normal', 'freeze', 'unsafe', 'replay', 'garbage'], default='normal')
+    a = ap.parse_args()
+    run_scenario(a.port, a.scenario, a.speed, a.steer, a.secs, a.rate)
     return 0
 
 

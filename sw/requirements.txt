@@ -1,0 +1,4 @@
+# Python packages for the evaluation examples (Python 3.8+)
+pyserial>=3.5        # sw/examples/hibiki_eval.py, sw/tools/pc_host.py (talk to the board)
+matplotlib>=3.7      # sw/results/make_figures.py only (redraw the graphs)
+numpy>=1.24          # sw/results/make_figures.py only

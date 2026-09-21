@@ -87,6 +87,8 @@ On the Jetson, the host-side round-trip time of a command through the USB-TTL is
 
 ## 7. Not measured / limitations
 
+- **Rare monitor jitter spikes in long runs.** Over the four floor runs recorded while filming (121 034 monitor periods on the flashed firmware), 20 periods (0.017 %) started 0.1–0.82 ms late and the longest monitor step took 1.14 ms (target 1 ms); p99 stayed at 4.7 µs and no 10 ms deadline was missed. The controlled runs in §2 contain no such spike. Likely cause: the gate task (priority 8) formats the 10 s metrics table itself, a 0.5–0.8 ms burst above the monitor (priority 10). The fix (report from a low-priority task) is written but not yet re-measured. `python3 sw/examples/hibiki_eval.py --offline sw/results/raw_logs/run_H_film_1p2/stm32.log` shows these two FAIL lines.
+
 - Power consumption was not measured.
 - The distance estimate is monocular (box height). Calibrated with one real person: box height 42 % at 2.0 m. It depends on the person's height and the camera pitch.
 - The detector is ST's pre-trained model. It detects real people reliably but did not detect a mannequin we tried.

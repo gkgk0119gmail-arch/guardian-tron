@@ -28,3 +28,6 @@ __pycache__/
 !sw/binaries/
 !sw/binaries/*
 !sw/results/**
+
+# evaluation reports written by sw/examples/hibiki_eval.py
+**/examples/out/
