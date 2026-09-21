@@ -1,0 +1,230 @@
+r[vision] 15.0 fps | NPU 28517 us (max 28765) | persons 1 (tallest h 82%) | HAZARD | misses 0 isp_err 0
+[gate] n=17990 ok=9549 veto=8413 bad=28 replay=0 maxlat=31851us | servo=423 v=0 mm/s STOPPED | vis st=4 fr=15417 camerr=0 tsk=2/0 | rx ovr=0 | /s loops 48 csi 60 dcmipp 75 u2 0
+[vision] 14.9 fps | NPU 28517 us (max 28518) | persons 1 (tallest h 82%) | HAZARD | misses 0 isp_err 0
+[gate] n=17990 ok=9549 veto=8413 bad=28 replay=0 maxlat=31851us | servo=423 v=0 mm/s STOPPED | vis st=7 fr=15433 camerr=0 tsk=2/0 | rx ovr=0 | /s loops 48 csi 60 dcmipp 75 u2 0
+[vision] 15.0 fps | NPU 28511 us (max 28517) | persons 1 (tallest h 91%) | HAZARD | misses 0 isp_err 0
+[gate] n=17990 ok=9549 veto=8413 bad=28 replay=0 maxlat=31851us | servo=423 v=0 mm/s STOPPED | vis st=3 fr=15448 camerr=0 tsk=4/2 | rx ovr=0 | /s loops 48 csi 62 dcmipp 78 u2 0
+[imu] roll 0 pitch 0 deg, yaw 0 dps, a_h 8 mg | 100 Hz period n=500 avg 10000 us, jitter min -22018 ns max 22903 ns | step max 377 us | i2c err 0
+[metrics] ---- since boot: n, mean, p50, p95, p99, max | target, over-target count, verdict ----
+[metric] ctx_switch: n=2000 mean 415ns p50 412ns p95 412ns p99 420ns max 875ns | target < 5700ns over 0 -> PASS
+[metric] irq_to_task: n=288023 mean 499ns p50 468ns p95 616ns p99 1136ns max 10.1us | target < 50.0us over 0 -> PASS
+[metric] gate_cmd_verdict: n=17990 mean 5071ns p50 4416ns p95 9088ns p99 9344ns max 15.5us | target < 1000.0us over 0 -> PASS
+[metric] hazard_to_brake: n=35 mean 25.6us p50 30.4us p95 33.2us p99 34.1us max 34.1us | target < 100.0us over 0 -> PASS
+[metric] frame_to_decision: n=15453 mean 29.9ms p50 30.1ms p95 30.6ms p99 31.1ms max 31.6ms | target < 100.0ms over 0 -> PASS
+[metric] npu_inference: n=15453 mean 28.5ms p50 28.5ms p95 28.5ms p99 28.5ms max 29.2ms | target < 50.0ms over 0 -> PASS
+[metric] monitor_jitter: n=102017 mean 665ns p50 190ns p95 1968ns p99 4672ns max 817.0us | target < 100.0us over 20 -> FAIL
+[metric] monitor_step: n=102018 mean 322.9us p50 323.5us p95 323.5us p99 323.5us max 1141.8us | target < 1000.0us over 3 -> FAIL
+[metric] link_loss_to_safe: n=4 mean 210.0ms p50 210.0ms p95 210.0ms p99 210.0ms max 210.0ms | target < 250.0ms over 0 -> PASS
+[stack] gate 1484/4096 B (36%) imu 1196/4096 B (29%) vision 1508/32768 B (4%) log 444/1024 B (43%)
+[vision] 14.9 fps | NPU 28515 us (max 28517) | persons 1 (tallest h 91%) | HAZARD | misses 0 isp_err 0
+[gate] n=17990 ok=9549 veto=8413 bad=28 replay=0 maxlat=31851us | servo=423 v=0 mm/s STOPPED | vis st=3 fr=15463 camerr=0 tsk=2/0 | rx ovr=0 | /s loops 48 csi 60 dcmipp 75 u2 0
+[vision] 15.0 fps | NPU 28516 us (max 28765) | persons 1 (tallest h 91%) | HAZARD | misses 0 isp_err 0
+[perf] cpu idle 46.8% main 0.0% log 0.0% gate 0.0% imu 3.2% vision 49.8% | switches 854/s
+[perf] gate CMD verdict+actuation n=0 avg 0 us max 0 us | USART2 irq->gate task n=0 avg 0 ns max 0 ns | hazard->âÉÿake (since boot) n=35 max 34 us
+[gate] n=17990 ok=9549 veto=8413 bad=28 replay=0 maxlat=31851us | servo=423 v=0 mm/s STOPPED | vis st=3 fr=15478 camerr=0 tsk=2/0 | rx ovr=0 | /s loops 48 csi 60 dcmipp 75 u2 0
+[vision] 14.9 fps | NPU 28516 us (max 28765) | persons 1 (tallest h 91%) | HAZARD | misses 0 isp_err 0
+[gate] n=17990 ok=9549 veto=8413 bad=28 replay=0 maxlat=31851us | servo=423 v=0 mm/s STOPPED | vis st=3 fr=15493 camerr=0 tsk=4/2 | rx ovr=0 | /s loops 48 csi 60 dcmipp 75 u2 0
+[vision] 14.9 fps | NPU 28517 us (max 28764) | persons 1 (tallest h 91%) | HAZARD | misses 0 isp_err 0
+[gate] n=17990 ok=9549 veto=8413 bad=28 replay=0 maxlat=31851us | servo=423 v=0 mm/s STOPPED | vis st=4 fr=15508 camerr=0 tsk=2/0 | rx ovr=0 | /s loops 48 csi 61 dcmipp 76 u2 0
+[vision] 15.0 fps | NPU 28516 us (max 28764) | persons 1 (tallest h 93%) | HAZARD | misses 0 isp_err 0
+[gate] n=17990 ok=9549 veto=8413 bad=28 replay=0 maxlat=31851us | servo=423 v=0 mm/s STOPPED | vis st=4 fr=15523 camerr=0 tsk=2/0 | rx ovr=0 | /s loops 48 csi 61 dcmipp 76 u2 0
+[imu] roll -11 pitch 0 deg, yaw 140 dps, a_h 75 mg | 100 Hz period n=500 avg 9999 us, jitter min -21815 ns max 22070 ns | step max 392 us | i2c err 0
+[vision] 15.0 fps | NPU 28517 us (max 28765) | persons 1 (tallest h 38%) | HAZARD | misses 0 isp_err 0
+[gate] n=17990 ok=9549 veto=8413 bad=28 replay=0 maxlat=31851us | servo=423 v=0 mm/s STOPPED | vis st=4 fr=15538 camerr=0 tsk=2/0 | rx ovr=0 | /s loops 48 csi 60 dcmipp 75 u2 0
+[vision] 14.9 fps | NPU 28517 us (max 28766) | persons 2 (tallest h 72%) | HAZARD | misses 0 isp_err 0
+[perf] cpu idle 47.2% main 0.0% log 0.0% gate 0.0% imu 3.2% vision 49.4% | switches 840/s
+[perf] gate CMD verdict+actuation n=0 avg 0 us max 0 us | USART2 irq->gate task n=0 avg 0 ns max 0 ns | hazard->brake (since boot) n=35 max 34 us
+[gate] n=17990 ok=9549 veto=8413 bad=28 replay=0 maxlat=31851us | servo=423 v=0 mm/s STOPPED | vis st=4 fr=15553 camerr=0 tsk=2/0 | rx ovr=0 | /s loops 48 csi 60 dcmipp 75 u2 0
+[vision] 15.0 fps | NPU 28764 us (max 28765) | persons 1 (tallest h 33%) | HAZARD | misses 0 isp_err 0
+[gate] n=17990 ok=9549 veto=8413 bad=28 replay=0 maxlat=31851us | servo=423 v=0 mm/s STOPPED | vis st=3 fr=15569 camerr=0 tsk=4/2 | rx ovr=0 | /s loops 48 csi 61 dcmipp 77 u2 0
+[gate] hazard clear -> accepting Jetson commands again
+[vision] 15.0 fps | NPU 28516 us (max 28765) | persons 1 (tallest h 33%) | clear | misses 0 isp_err 0
+[gate] STOP #30: PERSON AHEAD (conf 62%, h 72%) | frame->detect 30231 us | detect->gate 30 us | brake frame queued in 2842 ns (+2.6 ms on the 38400 wire)
+[gate] n=17990 ok=9549 veto=8413 bad=28 replay=0 maxlat=31851us | servo=423 v=0 mm/s STOPPED | vis st=3 fr=15584 camerr=0 tsk=4/2 | rx ovr=0 | /s loops 49 csi 61 dcmipp 76 u2 0
+[vision] 15.0 fps | NPU 28517 us (max 28766) | persons 1 (tallest h 25%) | HAZARD | misses 0 isp_err 0
+[gate] n=179zk=9549 veto=8413 bad=28 replay=0 maxlat=31851us | servo=423 v=0 mm/s STOPPED | vis st=3 fr=15599 camerr=0 tsk=4/2 | rx ovr=0 | /s loops 48 csi 60 dcmipp 75 u2 0
+[imu] roll 0 pitch 0 deg, yaw 0 dps, a_h 24 mg | 100 Hz period n=500 avg 10000 us, jitter min -24123 ns max 24145 ns | step max 413 us | i2c err 0
+[metrics] ---- since boot: n, mean, p50, p95, p99, max | target, over-target count, verdict ----
+[metric] ctx_switch: n=2000 mean 415ns p50 412ns p95 412ns p99 420ns max 875ns | target < 5700ns over 0 -> PASS
+[metric] irq_to_task: n=288023 mean 499ns p50 468ns p95 616ns p99 1136ns max 10.1us | target < 50.0us over 0 -> PASS
+[metric] gate_cmd_verdict: n=17990 mean 5071ns p50 4416ns p95 9088ns p99 9344ns max 15.5us | target < 1000.0us over 0 -> PASS
+[metric] hazard_to_brake: n=36 mean 25.7us p50 30.4us p95 33.2us p99 34.1us max 34.1us | target < 100.0us over 0 -> PASS
+[metric] frame_to_decision: n=15603 mean 29.9ms p50 30.1ms p95 30.6ms p99 31.1ms max 31.7ms | target < 100.0ms over 0 -> PASS
+[metric] npu_inference: n=15603 mean 28.5ms p50 28.5ms p95 28.5ms p99 28.5ms max 29.2ms | target < 50.0ms over 0 -> PASS
+[metric] monitor_jitter: n=103017 mean 664ns p50 190ns p95 1968ns p99 4672ns max 817.0us | target < 100.0us over 20 -> FAIL
+[metric] monitor_step: n=103018 mean 322.9us p50 323.5us p95 323.5us p99 323.5us max 1141.8us | target < 1000.0us over 3 -> FAIL
+[metric] link_loss_to_safe: n=4 mean 210.0ms p50 210.0ms p95 210.0ms p99 210.0ms max 210.0ms | target < 250.0ms over 0 -> PASS
+[stack] gate 1484/4096 B (36%) imu 1196/4096 B (29%) vision 1508/32768 B (4%) log 444/1024 B (43%)
+[vision] 14.9 fps | NPU 28517 us (max 28765) | persons 2 (tallest h 106%) | HAZARD | misses 0 isp_err 0
+[gate] n=17990 ok=9549 veto=8413 bad=28 replay=0 maxlat=31851us | servo=423 v=0 mm/s STOPPED | vis st=3 fr=15614 camerr=0 tsk=2/0 | rx ovr=0 | /s loops 48 csi 60 dcmipp 75 u2 0
+[fault] Jetson link restored after 144233 ms -> commands accepted again
+[vision] 15.0 fps | NPU 28520 us (max 28764) | persons 1 (tallest h 25%) | HAZARD | misses 0 isp_err 0
+[perf] cpu idle47.5% main 0.0% log 0.0% gate 0.0% imu 3.2% vision 49.1% | switches 1029/s
+[perf] gate CMD verdict+actuation n=24 avg 4 us max 9 us | USART2 irq->gate task n=455 avg 523 ns max 1338 ns | hazard->brake (since boot) n=36 max 34 us
+[gate] n=18023 ok=9582 veto=8413 bad=28 replay=0 maxlat=31851us | servo=423 v=0 mm/s STOPPED | vis st=4 fr=15629 camerr=0 tsk=2/0 | rx ovr=0 | /s loops 643 csi 62 dcmipp 77 u2 690
+[gate] hazard clear -> accepting Jetson commands again
+[gate] STOP #31: PERSON AHEAD (conf 75%, h 106%) | frame->detect 28924 us | detect->gate 30 us | brake frame queued in 1250 ns (+2.6 ms on the 38400 wire)
+[vision] 14.9 fps | NPU 28524 us (max 28768) | persons 2 (tallest h 93%) | HAZARD | misses 0 isp_err 0
+[gate] n=18079 ok=9638 veto=8413 bad=28 replay=0 maxlat=31851us | servo=423 v=0 mm/s STOPPED | vis st=4 fr=15644 camerr=0 tsk=2/0 | rx ovr=0 | /s loops 1028 csi 60 dcmipp 75 u2 1139
+[vision] 14.9 fps | NPU 28762 us (max 28767) | persons 1 (tallest h 61%) | HAZARD | misses 0 isp_err 0
+[gate] n=18133 ok=9692 veto=8413 bad=28 replay=0 maxlat=31851us | servo=423 v=0 mm/s STOPPED | vis st=4 fr=15659 camerr=0 tsk=2/0 | rx ovr=0 | /s loops 1042 csi 60 dcmipp 75 u2 1150
+[vision] 15.0 fps | NPU 28762 us (max 28765) | persons 1 (tallest h 64%) | HAZARD | misses 0 isp_err 0
+[gate] n=18188 ok=9747 veto=8413 bad=28 replay=0 maxlat=31851us | servo=423 v=0 mm/s STOPPED | vis st=4 fr=15674 camerr=0 tsk=2/0 | rx ovr=0 | /s loops 1024 csi 60 dcmipp 76 u2 1134
+[imu] roll 0 pitch 0 deg, yaw 0 dps, a_h 14 mg | 100 Hz period n=500 avg 9999 us, jitter min -3479 ns max 3560 ns | step max 327 us | i2c err 0
+[vision] 15.0 fps | NPU 28764 us (max 28765) | persons 2 (tallest h 64%) | HAZARD | misses 0 isp_err 0
+[gate] n=18244 ok=9803 veto=8413 bad=28 replay=0 maxlat=31851us | servo=423 v=0 mm/s STOPPED | vis st=4 fr=15689 camerr=0 tsk=2/0 | rx ovr=0 | /s loops 937 csi 60 dcmipp 75 u2 1046
+[vision] 14.9 fps | NPU 28523 us (max 28546) | persons 1 (tallest h 67%) | HAZARD | misses 0 isp_err 0
+[perf] cpu i7.1% main 0.0% log 0.0% gate 0.2% imu 3.2% vision 49.3% | switches 2735/s
+[perf] gate CMD verdict+actuation n=276 avg 4 us max 9 us | USART2 irq->gate task n=4947 avg 518 ns max 3901 ns | hazard->brake (since boot) n=37 max 34 us
+[gate] n=18299 ok=9858 veto=8413 bad=28 replay=0 maxlat=31851us | servo=423 v=0 mm/s STOPPED | vis st=4 fr=15704 camerr=0 tsk=2/0 | rx ovr=0 | /s loops 903 csi 60 dcmipp 75 u2 1007
+[vision] 14.9 fps | NPU 28517 us (max 28541) | persons 2 (tallest h 93%) | HAZARD | misses 0 isp_err 0
+[gate] n=18355 ok=9914 veto=8413 bad=28 replay=0 maxlat=31851us | servo=423 v=0 mm/s STOPPED | vis st=4 fr=15719 camerr=0 tsk=2/0 | rx ovr=0 | /s loops 890 csi 60 dcmipp 75 u2 995
+[vision] 14.9 fps | NPU 28524 us (max 28764) | persons 3 (tallest h 93%) | HAZARD | misses 0 isp_err 0
+[gate] n=18411 ok=9970 veto=8413 bad=28 replay=0 maxlat=31851us | servo=423 v=0 mm/s STOPPED | vis st=4 fr=15734 camerr=0 tsk=2/0 | rx ovr=0 | /s loops 906 csi 60 dcmipp 75 u2 1010
+[vision] 15.0 fps | NPU 28764 us (max 28765) | persons 0 (tallest h 0%) | HAZARD | misses 0 isp_err 0
+[gate] n=18466 ok=10025 veto=8413 bad=28 replay=0 maxlat=31851us | servo=423 v=0 mm/s STOPPED | vis st=4 fr=15749 camerr=0 tsk=2/0 | rx ovr=0 | /s loops 874 csi 60 dcmipp 75 u2 975
+[imu] roll -6 pitch 13 deg, yaw 4 dps, a_h 880 mg | 100 Hz period n=500 avg 9999 us, jitter min -1513 ns max 1687 ns | step max 385 us | i2c err 0
+[metrics] ---- since boot: n, mean, p50, p95, p99, max | target, over-target count, verdict ----
+[metric] ctx_switch: n=2000 mean 415ns p50 412ns p95 412ns p99 420ns max 875ns | target < 5700ns over 0 -> PASS
+[metric] irq_to_task: n=296429 mean 499ns p50 468ns p95 616ns p99 1136ns max 10.1us | target < 50.0us over 0 -> PASS
+[metric] gate_cmd_verdict: n=18480 mean 5057ns p50 4416ns p95 9088ns p99 9344ns max 15.5us | target < 1000.0us over 0 -> PASS
+[metric] hazard_to_brake: n=37 mean 25.8us p50 30.4us p95 33.2us p99 34.1us max 34.1us | target < 100.0us over 0 -> PASS
+[metric] frame_to_decision: n=15753 mean 29.9ms p50 30.1ms p95 30.6ms p99 31.1ms max 31.7ms | target < 100.0ms over 0 -> PASS
+[metric] npu_inference: n=15753 mean 28.5ms p50 28.5ms p95 28.5ms p99 28.5ms max 29.2ms | target < 50.0ms over 0 -> PASS
+[metric] monitor_jitter: n=104019 mean 661ns p50 190ns p95 1968ns p99 4672ns max 817.0us | target < 100.0us over 20 -> FAIL
+[metric] monitor_step: n=104020 mean 322.9us p50 323.5us p95 323.5us p99 323.5us max 1141.8us | target < 1000.0us over 3 -> FAIL
+[metric] link_loss_to_safe: n=4 mean 210.0ms p50 210.0ms p95 210.0ms p99 210.0ms max 210.0ms | target < 250.0ms over 0 -> PASS
+[stack] gate 1484/4096 B (36%) imu 1196/4096 B (29%) vision 1508/32768 B (4%) log 444/1024 B (43%)
+[vision] 14.9 fps | NPU 28764 us (max 28764) | persons 2 (tallest h 93%) | HAZARD | misses 0 isp_err 0
+[gate] n=18521 ok=10080 veto=8413 bad=28 replay=0 maxlat=31851us | servo=423 v=0 mm/s STOPPED | vis st=4 fr=15764 camerr=0 tsk=2/0 | rx ovr=0 | /s loops 862 csi 60 dcmipp 75 u2 970
+[vision] 15.0 fps | NPU 28517 us (max 28546) | persons 1 (tallest h 36%) | HAZARD | misses 0 isp_err 0
+[perf] cpu idle 46.8% main 0.0% log 0.0% gate 0.2% imu 3.2% vision 49.6% | switches 2536/s
+[perf] gate CMD verdict+actuation n=278 avg 4 us max 5 us | USART2 irq->gate task n=4371 avg 497 ns max 2308 ns | hazard->brake (since boot) n=37 max 34 us
+[gate] n=18577 ok=10136 veto=8413 bad=28 replay=0 maxlat=31851us | servo=423 v=0 mm/s STOPPED | vis st=4 fr=15779 camerr=0 tsk=2/0 | rx ovr=0 | /s loops 874 csi 60 dcmipp 75 u2 974
+[vision] 15.0 fps | NPU 28517 us (max 28523) | persons 0 (tallest h 0%) | HAZARD | misses 0 isp_err 0
+[gate] n=18632 ok=10191 veto=8413 bad=28 replay=0 maxlat=31851us | servo=423 v=0 mm/s STOPPED | vis st=4 fr=15794 camerr=0 tsk=2/0 | rx ovr=0 | /s loops 899 csi 60 dcmipp 75 u2 1001
+[gate] hazard cì•ÿar -> accepting Jetson commands again
+[vision] 15.0 fps | NPU 28518 us (max 28523) | persons 1 (tallest h 41%) | clear | misses 0 isp_err 0
+[gate] n=18688 ok=10247 veto=8413 bad=28 replay=0 maxlat=31851us | servo=423 v=0 mm/s DRIVING | vis st=4 fr=15809 camerr=0 tsk=2/0 | rx ovr=0 | /s loops 897 csi 60 dcmipp 75 u2 1000
+[vision] 14.9 fps | NPU 28517 us (max 28545) | persons 1 (tallest h 33%) | clear | misses 0 isp_err 0
+[gate] n=18742 ok=10301 veto=8413 bad=28 replay=0 maxlat=31851us | servo=423 v=0 mm/s DRIVING | vis st=4 fr=15824 camerr=0 tsk=2/0 | rx ovr=0 | /s loops 861 csi 60 dcmipp 75 u2 957
+[imu] roll 0 pitch 0 deg, yaw 0 dps, a_h 9 mg | 100 Hz period n=500 avg 9999 us, jitter min -1509 ns max 1687 ns | step max 324 us | i2c err 0
+[vision] 15.0 fps | NPU 28521 us (max 28765) | persons 1 (tallest h 33%) | clear | misses 0 isp_err 0
+[gate] n=18797 ok=10356 veto=8413 bad=28 replay=0 maxlat=31851us | servo=423 v=0 mm/s DRIVING | vis st=4 fr=15839 camerr=0 tsk=2/0 | rx ovr=0 | /s loops 881 csi 60 dcmipp 75 u2 980
+[gate] SLOW: person ~282 cm ahead (box h 29%) -> speed cap 406 mm/s
+[perf] cpu i48.1% main 0.0% log 0.0% gate 0.2% imu 3.2% vision 48.4% | switches 2537/s
+[perf] gate CMD verdict+actuation n=275 avg 5 us max 10 us | USART2 irq->gate task n=4355 avg 493 ns max 5306 ns | hazard->brake (since boot) n=37 max 34 us
+[vision] 15.0 fps | NPU 28520 us (max 28765) | persons 1 (tallest h 33%) | clear | misses 0 isp_err 0
+[gate] n=18852 ok=10375 veto=8449 bad=28 replay=0 maxlat=31851us | servo=423 v=309 mm/s DRIVING | vis st=3 fr=15855 camerr=0 tsk=4/2 | rx ovr=0 | /s loops 872 csi 61 dcmipp 77 u2 971
+[gate] SLOW: person ~336 cm ahead (box h 25%) -> speed cap 521 mm/s
+[gate] SLOW: person ~247 cm ahead (box h 33%) -> speed cap 309 mm/s
+[gate] SLOW: person ~336 cm ahead (box h 25%) -> speed cap 521 mm/s
+[vision] 14.9 fps | NPU 28527 us (max 28765) | persons 1 (tallest h 25%) | clear | misses 0 isp_err 0
+[gate] n=18907 ok=10375 veto=8504 bad=28 replay=0 maxlat=31851us | servo=423 v=521 mm/s DRIVING | vis st=3 fr=15870 camerr=0 tsk=4/2 | rx ovr=0 | /s loops 889 csi 60 dcmipp 75 u2 990
+[vision] 14.9 fps | NPU 28519 us (max 28765) | persons 1 (tallest h 25%) | clear | misses 0 isp_err 0
+[gate] n=18962 ok=10375 veto=8559 bad=28 replay=0 maxlat=31851us | servo=423 v=521 mm/s DRIVING | vis st=3 fr=15885 camerr=0 tsk=4/2 | rx ovr=0 | /s loops 899 csi 60 dcmipp 75 u2 1002
+[vision] 15.0 fps | NPU 28517 us (max 28765) | persons 1 (tallest h 25%) | clear | misses 0 isp_err 0
+[gate] n=19017 ok=10375 veto=8614 bad=28 replay=0 maxlat=31851us | servo=423 v=521 mm/s DRIVING | vis st=3 fr=15900 camerr=0 tsk=4/2 | rx ovr=0 | /s loops 882 csi 60 dcmipp 75 u2 980á[imu] roll 0 pitch 0 deg, yaw 0 dps, a_h 18 mg | 100 Hz period n=500 avg 10000 us, jitter min -1467 ns max 1665 ns | step max 324 us | i2c err 0
+[metrics] ---- since boot: n, mean, p50, p95, p99, max | target, over-target count, verdict ----
+[metric] ctx_switch: n=2000 mean 415ns p50 412ns p95 412ns p99 420ns max 875ns | target < 5700ns over 0 -> PASS
+[metric] irq_to_task: n=305161 mean 499ns p50 468ns p95 616ns p99 1136ns max 10.1us | target < 50.0us over 0 -> PASS
+[metric] gate_cmd_verdict: n=19031 mean 5071ns p50 4416ns p95 9088ns p99 9344ns max 15.5us | target < 1000.0us over 0 -> PASS
+[metric] hazard_to_brake: n=37 mean 25.8us p50 30.4us p95 33.2us p99 34.1us max 34.1us | target < 100.0us over 0 -> PASS
+[metric] frame_to_decision: n=15903 mean 29.9ms p50 30.1ms p95 30.6ms p99 31.1ms max 31.7ms | target < 100.0ms over 0 -> PASS
+[metric] npu_inference: n=15903 mean 28.5ms p50 28.5ms p95 28.5ms p99 28.5ms max 29.2ms | target < 50.0ms over 0 -> PASS
+[metric] monitor_jitter: n=105019 mean 658ns p50 190ns p95 1968ns p99 4672ns max 817.0us | target < 100.0us over 20 -> FAIL
+[metric] monitor_step: n=105020 mean 322.9us p50 323.5us p95 323.5us p99 323.5us max 1141.8us | target < 1000.0us over 3 -> FAIL
+[metric] link_loss_to_safe: n=4 mean 210.0ms p50 210.0ms p95 210.0ms p99 210.0ms max 210.0ms | target < 250.0ms over 0 -> PASS
+[stack] gate 1484/4096 B (36%) imu 1196/4096 B (29%) vision 1508/32768 B (4%) log 444/1024 B (43%)
+[vision] 15.0 fps | NPU 28518 us (max 28764) | persons 1 (tallest h 25%) | clear | misses 0 isp_err 0
+[gate] n=19073 ok=10375 veto=8670 bad=28 replay=0 maxlat=31851us | servo=423 v=521 mm/s DRIVING | vis st=3 fr=15915 camerr=0 tsk=4/2 | rx ovr=0 | /s loops 895 csi 60 dcmipp 75 u2 1005
+[perf] cpu i48.2% main 0.0% log 0.0% gate 0.2% imu 3.2% vision 48.3% | switches 2572/s
+[perf] gate CMD verdict+actuation n=277 avg 6 us max 15 us | USART2 irq->gate task n=4396 avg 493 ns max 4203 ns | hazard->brake (since boot) n=37 max 34 us
+[vision] 15.0 fps | NPU 28517 us (max 28529) | persons 1 (tallest h 25%) | clear | misses 0 isp_err 0
+[gate] n=19129 ok=10375 veto=8726 bad=28 replay=0 maxlat=31851us | servo=423 v=521 mm/s DRIVING | vis st=3 fr=15930 camerr=0 tsk=4/2 | rx ovr=0 | /s loops 893 csi 60 dcmipp 75 u2 995á[gate] SLOW: person ~247 cm ahead (box h 33%) -> speed cap 309 mm/s
+[vision] 14.9 fps | NPU 28513 us (max 28765) | persons 1 (tallest h 33%) | clear | misses 0 isp_err 0
+[gate] n=19185 ok=10375 veto=8782 bad=28 replay=0 maxlat=31851us | servo=423 v=309 mm/s DRIVING | vis st=3 fr=15945 camerr=0 tsk=4/2 | rx ovr=0 | /s loops 893 csi 60 dcmipp 75 u2 997
+[vision] 15.0 fps | NPU 28764 us (max 28764) | persons 1 (tallest h 33%) | clear | misses 0 isp_err 0
+[gate] n=19241 ok=10375 veto=8838 bad=28 replay=0 maxlat=31851us | servo=423 v=309 mm/s DRIVING | vis st=3 fr=15960 camerr=0 tsk=4/2 | rx ovr=0 | /s loops 890 csi 60 dcmipp 75 u2 993
+[vision] 15.0 fps | NPU 28764 us (max 28764) | persons 1 (tallest h 33%) | clear | misses 0 isp_err 0
+[gate] n=19298 ok=10375 veto=8895 bad=28 replay=0 maxlat=31851us | servo=423 v=309 mm/s DRIVING | vis st=3 fr=15975 camerr=0 tsk=4/2 | rx ovr=0 | /s loops 894 csi 60 dcmipp 75 u2 998
+[imu] roll 0 pitch 2 deg, yaw 0 dps, a_h 81 mg | 100 Hz period n=500 avg 9999 us, jitter min -1714 ns max 1767 ns | step max 356 us | i2c err 0
+[vision] 15.0 fps | NPU 28765 us (max 28765) | persons 1 (tallest h 33%) | clear | misses 0 isp_err 0
+[gate] n=19353 ok=10375 veto=8950 bad=28 replay=0 maxlat=31851us | servo=423 v=309 mm/s DRIVING | vis st=3 fr=15990 camerr=0 tsk=4/2 | rx ovr=0 | /s loops 876 csi 60 dcmipp 75 u2 977
+[perf] cpu idle48.2% main 0.0% log 0.0% gate 0.2% imu 3.2% vision 48.3% | switches 2555/s
+[perf] gate CMD verdict+actuation n=279 avg 6 us max 14 us | USART2 irq->gate task n=4392 avg 493 ns max 4050 ns | hazard->brake (since boot) n=37 max 34 us
+[vision] 14.9 fps | NPU 28517 us (max 28765) | persons 1 (tallest h 33%) | clear | misses 0 isp_err 0
+[gate] n=19408 ok=10375 veto=9005 bad=28 replay=0 maxlat=31851us | servo=423 v=309 mm/s DRIVING | vis st=3 fr=16005 camerr=0 tsk=4/2 | rx ovr=0 | /s loops 872 csi 60 dcmipp 75 u2 971
+[gate] STOP #32: PERSON AHEAD (conf 99%, h 45%) | frame->detect 29162 us | detect->gate 30 us | brake frame queued in 1232 ns (+2.6 ms on the 38400 wire)
+[vision] 15.0 fps | NPU 28517 us (max 28765) | persons 1 (tallest h 45%) | HAZARD | misses 0 isp_err 0
+[gate] n=19463 ok=10375 veto=9060 bad=28 replay=0 maxlat=31851us | servo=423 v=0 mm/s STOPPED | vis st=3 fr=16020 camerr=0 tsk=4/2 | rx ovr=0 | /s loops 902 csi 60 dcmipp 75 u2 1002
+[vision] 15.0 fps | NPU 28765 us (max 28765) | persons 1 (tallest h 45%) | HAZARD | misses 0 isp_err 0
+[gate] n=19518 ok=10375 veto=9115 bad=28 replay=0 maxlat=31851us | servo=423 v=0 mm/s STOPPED | vis st=3 fr=16035 camerr=0 tsk=4/2 | rx ovr=0 | /s loops 912 csi 60 dcmipp 75 u2 1014
+[vision] 15.0 fps | NPU 28517 us (max 28765) | persons 1 (tallest h 41%) | HAZARD | misses 0 isp_err 0
+[gate] n=19573 ok=10375 veto=9170 bad=28 replay=0 maxlat=31851us | servo=423 v=0 mm/s STOPPED | vis st=3 fr=16050 camerr=0 tsk=4/2 | rx ovr=0 | /s loops 906 csi 60 dcmipp 75 u2 1009
+[imu] roll 0 pitch 0 deg, yaw 0 dps, a_h 15 mg | 100 Hz period n=500 avg 10000 us, jitter min -1132 ns max 1310 ns | step max 325 us | i2c err 0
+[metrics] ---- since boot: n, mean, p50, p95, p99, max | target, over-target count, verdict ----
+[metric] ctx_switch: n=2000 mean 415ns p50 412ns p95 412ns p99 420ns max 875ns | target < 5700ns over 0 -> PASS
+[metric] irq_to_task: n=313999 mean 499ns p50 468ns p95 600ns p99 1136ns max 10.1us | target < 50.0us over 0 -> PASS
+[metric] gate_cmd_verdict: n=19587 mean 5086ns p50 4416ns p95 9088ns p99 9600ns max 15.5us | target < 1000.0us over 0 -> PASS
+[metric] hazard_to_brake: n=38 mean 26.0us p50 30.4us p95 33.2us p99 34.1us max 34.1us | target < 100.0us over 0 -> PASS
+[metric] frame_to_decision: n=16053 mean 29.9ms p50 30.1ms p95 30.6ms p99 31.1ms max 31.7ms | target < 100.0ms over 0 -> PASS
+[metric] npu_inference: n=16053 mean 28.5ms p50 28.5ms p95 28.5ms p99 28.5ms max 29.2ms | target < 50.0ms over 0 -> PASS
+[metric] monitor_jitter: n=106019 mean 654ns p50 190ns p95 1968ns p99 4672ns max 817.0us | target < 100.0us over 20 -> FAIL
+[metric] monitor_step: n=106020 mean 322.9us p50 323.5us p95 323.5us p99 323.5us max 1141.8us | target < 1000.0us over 3 -> FAIL
+[metric] link_loss_to_safe: n=4 mean 210.0ms p50 210.0ms p95 210.0ms p99 210.0ms max 210.0ms | target < 250.0ms over 0 -> PASS
+[stack] gate 1484/4096 B (36%) imu 1196/4096 B (29%) vision 1508/32768 B (4%) log 444/1024 B (43%)
+[gate] hazard clear -> accepting Jetson commands again
+[gate] SLOW released: no person ahead
+[gate] n=19628 ok=10375 veto=9225 bad=28 replay=0 maxlat=31851us | servo=423 v=600 mm/s DRIVING | vis st=3 fr=16065 camerr=0 tsk=4/2 | rx ovr=0 | /s loops 877 csi 60 dcmipp 75 u2 985
+[vision] 15.0 fps | NPU 28515 us (max 28765) | persons 0 (tallest h 0%) | clear | misses 0 isp_err 0
+[perf] cpu idle47.6% main 0.0% log 0.0% gate 0.2% imu 3.2% vision 48.8% | switches 2563/s
+[perf] gate CMD verdict+actuation n=275 avg 4 us max 9 us | USART2 irq->gate task n=4412 avg 495 ns max 5631 ns | hazard->brake (since boot) n=38 max 34 us
+[gate] n=19683 ok=10418 veto=9237 bad=28 replay=0 maxlat=31851us | servo=423 v=1200 mm/s DRIVING | vis st=3 fr=16080 camerr=0 tsk=4/2 | rx ovr=0 | /s loops 863 csi 60 dcmipp 75 u2 960
+[vision] 15.0 fps | NPU 28509 us (max 28764) | persons 0 (tallest h 0%) | clear | misses 0 isp_err 0
+[gate] STOP #33: PERSON AHEAD (conf 92%, h 54%) | frame->detect 29637 us | detect->gate 31 us | brake frame queued in 1197 ns (+2.6 ms on the 38400 wire)
+[gate] n=19738 ok=10473 veto=9237 bad=28 replay=0 maxlat=31851us | servo=423 v=0 mm/s STOPPED | vis st=3 fr=16095 camerr=0 tsk=4/2 | rx ovr=0 | /s loops 848 csi 60 dcmipp 75 u2 942
+[vision] 14.9 fps | NPU 28525 us (max 28525) | persons 1 (tallest h 54%) | HAZARD | misses 0 isp_err 0
+[gate] n=19793 ok=10474 veto=9291 bad=28 replay=0 maxlat=31851us | servo=423 v=0 mm/s STOPPED | vis st=3 fr=16110 camerr=0 tsk=4/2 | rx ovr=0 | /s loops 901 csi 60 dcmipp 75 u2 1005
+[vision] 14.9 fps | NPU 28522 us (max 28526) | persons 1 (tallest h 67%) | HAZARD | misses 0 isp_err 0
+[gate] n=19848 ok=10474 veto=9346 bad=28 replay=0 maxlat=31851us | servo=423 v=0 mm/s STOPPED | vis st=3 fr=16125 camerr=0 tsk=4/2 | rx ovr=0 | /s loops 895 csi 60 dcmipp 75 u2 998
+[imu] roll -1 pitch 5 deg, yaw -1 dps, a_h 88 mg | 100 Hz period n=500 avg 9999 us, jitter min -1314 ns max 1512 ns | step max 324 us | i2c err 0
+[vision] 15.0 fps | NPU 28517 us (max 28523) | persons 1 (tallest h 67%) | HAZARD | misses 0 isp_err 0
+[gate] n=19903 ok=10474 veto=9401 bad=28 replay=0 maxlat=31851us | servo=423 v=0 mm/s STOPPED | vis st=3 fr=16140 camerr=0 tsk=4/2 | rx ovr=0 | /s loops 899 csi 60 dcmipp 75 u2 1002
+[vision] 15.0 fps | NPU 28515 us (max 28526) | persons 1 (tallest h 72%) | HAZARD | misses 0 isp_err 0
+[perf] cpu idle47.6% main 0.0% log 0.0% gate 0.2% imu 3.2% vision 48.9% | switches 2554/s
+[perf] gate CMD verdict+actuation n=275 avg 4 us max 9 us | USART2 irq->gate task n=4388 avg 495 ns max 1407 ns | hazard->brake (since boot) n=39 max 34 us
+[gate] n=19958 ok=10474 veto=9456 bad=28 replay=0 maxlat=31851us | servo=423 v=0 mm/s STOPPED | vis st=3 fr=16155 camerr=0 tsk=4/2 | rx ovr=0 | /s loops 900 csi 60 dcmipp 75 u2 1003
+[vision] 14.9 fps | NPU 28516 us (max 28528) | persons 1 (tallest h 72%) | HAZARD | misses 0 isp_err 0
+[gate] n=20015 ok=10474 veto=9513 bad=28 replay=0 maxlat=31851us | servo=423 v=0 mm/s STOPPED | vis st=3 fr=16170 camerr=0 tsk=4/2 | rx ovr=0 | /s loops 897 csi 60 dcmipp 75 u2 1006
+[vision] 15.0 fps | NPU 28517 us (max 28524) | persons 1 (tallest h 72%) | HAZARD | misses 0 isp_err 0
+[gate] n=20070 ok=10476 veto=9566 bad=28 replay=0 maxlat=31851us | servo=423 v=0 mm/s STOPPED | vis st=3 fr=16185 camerr=0 tsk=4/2 | rx ovr=0 | /s loops 877 csi 60 dcmipp 75 u2 975
+[vision] 15.0 fps | NPU 28522 us (max 28525) | persons 1 (tallest h 72%) | HAZARD | misses 0 isp_err 0
+[gate] n=20125 ok=10531 veto=9566 bad=28 replay=0 maxlat=31851us | servo=423 v=0 mm/s STOPPED | vis st=3 fr=16200 camerr=0 tsk=4/2 | rx ovr=0 | /s loops 889 csi 60 dcmipp 75 u2 994
+[imu] roll 0 pitch 0 deg, yaw 0 dps, a_h 7 mg | 100 Hz period n=500 avg 9999 us, jitter min -3895 ns max 4646 ns | step max 369 us | i2c err 0
+[vision] 14.9 fps | NPU 28520 us (max 28778) | persons 1 (tallest h 67%) | HAZARD | misses 0 isp_err 0
+[metrics] ---- since boot: n, mean, p50, p95, p99, max | target, over-target count, verdict ----
+[metric] ctx_switch: n=2000 mean 415ns p50 412ns p95 412ns p99 420ns max 875ns | target < 5700ns over 0 -> PASS
+[metric] irq_to_task: n=322786 mean 499ns p50 468ns p95 600ns p99 1136ns max 10.1us | target < 50.0us over 0 -> PASS
+[metric] gate_cmd_verdict: n=20139 mean 5078ns p50 4416ns p95 9088ns p99 9600ns max 15.5us | target < 1000.0us over 0 -> PASS
+[metric] hazard_to_brake: n=39 mean 26.1us p50 30.4us p95 33.2us p99 34.1us max 34.1us | target < 100.0us over 0 -> PASS
+[metric] frame_to_decision: n=16203 mean 29.9ms p50 30.1ms p95 30.6ms p99 31.1ms max 31.7ms | target < 100.0ms over 0 -> PASS
+[metric] npu_inference: n=16203 mean 28.5ms p50 28.5ms p95 28.5ms p99 28.5ms max 29.2ms | target < 50.0ms over 0 -> PASS
+[metric] monitor_jitter: n=107019 mean 651ns p50 190ns p95 1936ns p99 4672ns max 817.0us | target < 100.0us over 20 -> FAIL
+[metric] monitor_step: n=107020 mean 322.9us p50 323.5us p95 323.5us p99 323.5us max 1141.8us | target < 1000.0us over 3 -> FAIL
+[metric] link_loss_to_safe: n=4 mean 210.0ms p50 210.0ms p95 210.0ms p99 210.0ms max 210.0ms | target < 250.0ms over 0 -> PASS
+[stack] gate 1484/4096 B (36%) imu 1196/4096 B (29%) vision 1508/32768 B (4%) log 444/1024 B (43%)
+[gate] n=20180 ok=10586 veto=9566 bad=28 replay=0 maxlat=31851us | servo=423 v=0 mm/s STOPPED | vis st=3 fr=16215 camerr=0 tsk=4/2 | rx ovr=0 | /s loops 1029 csi 60 dcmipp 75 u2 1139
+[vision] 15.0 fps | NPU 28520 us (max 28764) | persons 1 (tallest h 72%) | HAZARD | misses 0 isp_err 0
+[perf] cÕiûe 47.2% main 0.0% log 0.0% gate 0.2% imu 3.2% vision 49.3% | switches 2660/s
+[perf] gate CMD verdict+actuation n=277 avg 4 us max 5 us | USART2 irq->gate task n=4681 avg 508 ns max 1431 ns | hazard->brake (since boot) n=39 max 34 us
+[gate] n=20235 ok=10641 veto=9566 bad=28 replay=0 maxlat=31851us | servo=423 v=0 mm/s STOPPED | vis st=3 fr=16230 camerr=0 tsk=4/2 | rx ovr=0 | /s loops 1039 csi 61 dcmipp 76 u2 1149
+[vision] 15.0 fps | NPU 28516 us (max 28770) | persons 1 (tallest h 72%) | HAZARD | misses 0 isp_err 0
+[fault] Jetson silent for 206 ms (watchdog 200 ms) -> safe state (brake + center)
+[gate] n=20238 ok=10644 veto=9566 bad=28 replay=0 maxlat=31851us | servo=423 v=0 mm/s STOPPED | vis st=3 fr=16245 camerr=0 tsk=4/2 | rx ovr=0 | /s loops 91 csi 60 dcmipp 75 u2 51
+[vision] 15.0 fps | NPU 28515 us (max 28763) | persons 1 (tallest h 64%) | HAZARD | misses 0 isp_err 0
+[gate] n=20238 ok=10644 veto=9566 bad=28 replay=0 maxlat=31851us | servo=423 v=0 mm/s STOPPED | vis st=3 fr=16260 camerr=0 tsk=2/0 | rx ovr=0 | /s loops 48 csi 60 dcmipp 75 u2 0
+[vision] 15.0 fps | NPU 28517 us (max 28764) | persons 1 (tallest h 64%) | HAZARD | misses 0 isp_err 0
+[gate] n’‚’ ok=10644 veto=9566 bad=28 replay=0 maxlat=31851us | servo=423 v=0 mm/s STOPPED | vis st=3 fr=16275 camerr=0 tsk=4/2 | rx ovr=0 | /s loops 48 csi 60 dcmipp 75 u2 0
+[imu] roll 0 pitch 0 deg, yaw 0 dps, a_h 1 mg | 100 Hz period n=500 avg 10000 us, jitter min -4452 ns max 4375 ns | step max 334 us | i2c err 0
+[vision] 15.0 fps | NPU 28515 us (max 28518) | persons 1 (tall

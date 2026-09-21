@@ -60,15 +60,33 @@ flowchart LR
 | Metric | Design target | Measured (max, n) |
 |---|---|---|
 | Context switch (`tk_wup_tsk` → task running) | < 5.7 µs | **0.88 µs** (mean 0.42 µs, n = 2000) |
-| Hazard detected → brake issued | < 100 µs | **31 µs** (mean 30.5 µs, n = 6) |
+| Hazard detected → brake issued | < 100 µs | **34 µs** (person stops: mean 30.1 µs; IMU tilts: 1 µs; n = 62) |
 | USART interrupt → gatekeeper task | < 50 µs | **6.1 µs** (p99 1.2 µs, n = 72 257) |
 | Jetson command → verdict + actuation | < 1 ms | **15.5 µs** (p99 9.6 µs, n = 4 538) |
 | 100 Hz monitor period jitter (NPU at full load, Jetson at 100 % CPU) | 42 % below Linux | **23 µs**. Linux on the Jetson under the same load: up to 3.3–3.9 ms (≥ 99.3 % lower) |
-| Jetson frozen → car in safe state | < 250 ms | **210 ms** (watchdog 200 ms) |
+| Jetson frozen → car in safe state | < 250 ms | **210 ms** (n = 7, watchdog 200 ms) |
 | Camera frame → person decision | < 100 ms | 31.4 ms (NPU 28.5 ms) |
 | CPU used by the safety tasks (gate + imu) | < 3 % | 3.4 % |
 
-All numbers are printed by the firmware itself (DWT cycle counter, 1.25 ns resolution). How they were measured is in [sw/docs/test_report.md](sw/docs/test_report.md). Raw logs and CSV files are in [sw/results/](sw/results/).
+All numbers are printed by the firmware itself (DWT cycle counter, 1.25 ns resolution). How they were measured is in [sw/docs/test_report.md](sw/docs/test_report.md). Raw logs and CSV files are in [sw/results/](sw/results/). The graphs below are regenerated from those logs by [`sw/results/make_figures.py`](sw/results/make_figures.py).
+
+### Graphs
+
+![All metrics against the design targets](sw/results/figures/metrics_vs_targets.png)
+
+![100 Hz loop jitter: μT-Kernel vs Linux](sw/results/figures/jitter_rtos_vs_linux.png)
+
+![57 real person stops: AI part vs RTOS part](sw/results/figures/person_stop_latency.png)
+
+![Every hazard ended in the safe state](sw/results/figures/faults_to_safe_state.png)
+
+![Distance-aware speed cap](sw/results/figures/speed_governor.png)
+
+![Where the time goes in one stop](sw/results/figures/stop_latency_budget.png)
+
+![CPU share per task and stack use](sw/results/figures/cpu_and_stack.png)
+
+![Firmware memory](sw/results/figures/memory_map.png)
 
 ## Documents
 

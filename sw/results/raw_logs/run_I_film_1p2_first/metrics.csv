@@ -1,0 +1,10 @@
+metric,n,mean,p50,p95,p99,max,target,over_target,verdict
+ctx_switch,2000,415ns,412ns,412ns,420ns,875ns,5700ns,0,PASS
+irq_to_task,322786,499ns,468ns,600ns,1136ns,10.1us,50.0us,0,PASS
+gate_cmd_verdict,20139,5078ns,4416ns,9088ns,9600ns,15.5us,1000.0us,0,PASS
+hazard_to_brake,39,26.1us,30.4us,33.2us,34.1us,34.1us,100.0us,0,PASS
+frame_to_decision,16203,29.9ms,30.1ms,30.6ms,31.1ms,31.7ms,100.0ms,0,PASS
+npu_inference,16203,28.5ms,28.5ms,28.5ms,28.5ms,29.2ms,50.0ms,0,PASS
+monitor_jitter,107019,651ns,190ns,1936ns,4672ns,817.0us,100.0us,20,FAIL
+monitor_step,107020,322.9us,323.5us,323.5us,323.5us,1141.8us,1000.0us,3,FAIL
+link_loss_to_safe,4,210.0ms,210.0ms,210.0ms,210.0ms,210.0ms,250.0ms,0,PASS

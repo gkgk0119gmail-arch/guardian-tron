@@ -1,0 +1,63 @@
+[INFO] [launch]: All log files can be found below /home/orin/.ros/log/2026-09-21-23-20-21-611593-ubuntu-10853
+[INFO] [launch]: Default logging verbosity is set to INFO
+[INFO] [urg_node_driver-1]: process started with pid [10855]
+[INFO] [static_transform_publisher-2]: process started with pid [10857]
+[INFO] [joy_node-3]: process started with pid [10859]
+[INFO] [joy_teleop-4]: process started with pid [10861]
+[INFO] [ackermann_mux-5]: process started with pid [10863]
+[INFO] [python3-6]: process started with pid [10865]
+[INFO] [python3-7]: process started with pid [10875]
+[static_transform_publisher-2] [WARN] [1790000421.727168861] []: Old-style arguments are deprecated; see --help for new-style arguments
+[ackermann_mux-5] [INFO] [1790000421.781410159] [ackermann_mux]: Topic handler 'topics.joystick' subscribed to topic 'teleop': timeout = 0.200000s , priority = 100.
+[ackermann_mux-5] [INFO] [1790000421.784292420] [ackermann_mux]: Topic handler 'topics.navigation' subscribed to topic 'drive': timeout = 0.200000s , priority = 10.
+[static_transform_publisher-2] [INFO] [1790000421.787683463] [static_baselink_to_laser]: Spinning until stopped - publishing transform
+[static_transform_publisher-2] translation: ('0.270000', '0.000000', '0.110000')
+[static_transform_publisher-2] rotation: ('0.000000', '0.000000', '0.000000', '1.000000')
+[static_transform_publisher-2] from 'base_link' to 'laser'
+[urg_node_driver-1] [INFO] [1790000421.838982532] [urg_node]: Connected to network device with ID: B2244753
+[urg_node_driver-1] [INFO] [1790000421.939010194] [urg_node]: Streaming data.
+[python3-6] [INFO] [1790000422.157380487] [gt_cruise]: cruise 1.20 m/s, steering +0.000 rad (waiting for /race/enabled)
+[python3-7] [INFO] [1790000422.720597892] [gt_bridge]: ackermann_cmd -> /dev/ttyUSB0@115200, 100 Hz, seq start 10792858
+[python3-7] [INFO] [1790000423.678763620] [gt_bridge]: link=OK input=none->stop steer=+0.000rad v=+0.00 | sent=97 ok=52 veto=0 bad=1 lat avg=4855us max=31450us
+[python3-7] [INFO] [1790000424.678766603] [gt_bridge]: link=OK input=none->stop steer=+0.000rad v=+0.00 | sent=197 ok=104 veto=0 bad=1 lat avg=3048us max=31450us
+[python3-7] [INFO] [1790000425.678796916] [gt_bridge]: link=OK input=none->stop steer=+0.000rad v=+0.00 | sent=297 ok=158 veto=0 bad=1 lat avg=2800us max=31450us
+[python3-7] [INFO] [1790000426.678961760] [gt_bridge]: link=OK input=none->stop steer=+0.000rad v=+0.00 | sent=397 ok=211 veto=0 bad=1 lat avg=2543us max=31450us
+[python3-7] [INFO] [1790000427.678753377] [gt_bridge]: link=OK input=none->stop steer=+0.000rad v=+0.00 | sent=497 ok=265 veto=0 bad=1 lat avg=2385us max=31450us
+[python3-7] [INFO] [1790000428.678778218] [gt_bridge]: link=OK input=none->stop steer=+0.000rad v=+0.00 | sent=597 ok=319 veto=0 bad=1 lat avg=2279us max=31450us
+[python3-7] [INFO] [1790000429.678898260] [gt_bridge]: link=OK input=none->stop steer=+0.000rad v=+0.00 | sent=697 ok=325 veto=48 bad=1 lat avg=2199us max=31450us
+[python3-7] [INFO] [1790000430.678798361] [gt_bridge]: link=OK input=none->stop steer=+0.000rad v=+0.00 | sent=797 ok=325 veto=101 bad=1 lat avg=2075us max=31450us
+[python3-7] [INFO] [1790000431.678498967] [gt_bridge]: link=OK input=none->stop steer=+0.000rad v=+0.00 | sent=897 ok=325 veto=156 bad=1 lat avg=2163us max=31450us
+[python3-7] [INFO] [1790000432.678773414] [gt_bridge]: link=OK input=none->stop steer=+0.000rad v=+0.00 | sent=997 ok=366 veto=168 bad=1 lat avg=2180us max=31450us
+[python3-7] [INFO] [1790000433.678685483] [gt_bridge]: link=OK input=none->stop steer=+0.000rad v=+0.00 | sent=1097 ok=419 veto=168 bad=1 lat avg=2093us max=31450us
+[python3-7] [INFO] [1790000434.678248517] [gt_bridge]: link=OK input=none->stop steer=+0.000rad v=+0.00 | sent=1197 ok=472 veto=168 bad=3 lat avg=2297us max=31450us
+[python3-7] [INFO] [1790000435.677877505] [gt_bridge]: link=OK input=none->stop steer=+0.000rad v=+0.00 | sent=1297 ok=523 veto=168 bad=3 lat avg=2217us max=31450us
+[python3-7] [INFO] [1790000436.678791746] [gt_bridge]: link=OK input=none->stop steer=+0.000rad v=+0.00 | sent=1397 ok=578 veto=168 bad=3 lat avg=2260us max=31450us
+[python3-7] [INFO] [1790000437.678829706] [gt_bridge]: link=OK input=none->stop steer=+0.000rad v=+0.00 | sent=1497 ok=631 veto=168 bad=3 lat avg=2190us max=31450us
+[python3-6] [INFO] [1790000437.733267427] [gt_cruise]: ARMED
+[python3-7] [INFO] [1790000438.678786576] [gt_bridge]: link=OK input=live steer=+0.000rad v=+1.20 | sent=1597 ok=662 veto=192 bad=3 lat avg=2172us max=31450us
+[python3-7] [INFO] [1790000439.679033694] [gt_bridge]: link=OK input=live steer=+0.000rad v=+1.20 | sent=1697 ok=707 veto=201 bad=3 lat avg=2170us max=31450us
+[python3-7] [INFO] [1790000440.679068453] [gt_bridge]: link=OK input=live steer=+0.000rad v=+1.20 | sent=1797 ok=717 veto=245 bad=3 lat avg=2186us max=31450us
+[python3-7] [INFO] [1790000441.678786659] [gt_bridge]: link=OK input=live steer=+0.000rad v=+1.20 | sent=1897 ok=723 veto=293 bad=3 lat avg=2134us max=31450us
+[python3-7] [INFO] [1790000442.678808267] [gt_bridge]: link=OK input=live steer=+0.000rad v=+1.20 | sent=1997 ok=723 veto=345 bad=3 lat avg=2089us max=31450us
+[python3-7] [INFO] [1790000443.678823889] [gt_bridge]: link=OK input=live steer=+0.000rad v=+1.20 | sent=2097 ok=723 veto=399 bad=3 lat avg=2167us max=31450us
+[python3-7] [INFO] [1790000444.678933691] [gt_bridge]: link=OK input=live steer=+0.000rad v=+1.20 | sent=2197 ok=723 veto=451 bad=3 lat avg=2125us max=31450us
+[python3-7] [INFO] [1790000445.678934881] [gt_bridge]: link=OK input=live steer=+0.000rad v=+1.20 | sent=2297 ok=723 veto=503 bad=3 lat avg=2086us max=31450us
+[python3-7] [INFO] [1790000446.678708801] [gt_bridge]: link=OK input=live steer=+0.000rad v=+1.20 | sent=2397 ok=748 veto=531 bad=3 lat avg=2089us max=31450us
+[python3-7] [INFO] [1790000447.678703431] [gt_bridge]: link=OK input=live steer=+0.000rad v=+1.20 | sent=2497 ok=802 veto=531 bad=3 lat avg=2053us max=31450us
+[python3-7] [INFO] [1790000448.678769487] [gt_bridge]: link=OK input=live steer=+0.000rad v=+1.20 | sent=2597 ok=857 veto=531 bad=3 lat avg=2063us max=31450us
+[python3-7] [INFO] [1790000449.678824695] [gt_bridge]: link=OK input=live steer=+0.000rad v=+1.20 | sent=2697 ok=859 veto=584 bad=3 lat avg=2072us max=31450us
+[python3-7] [INFO] [1790000450.678797948] [gt_bridge]: link=OK input=live steer=+0.000rad v=+1.20 | sent=2797 ok=859 veto=637 bad=3 lat avg=2041us max=31450us
+[python3-7] [INFO] [1790000451.678766785] [gt_bridge]: link=OK input=live steer=+0.000rad v=+1.20 | sent=2897 ok=859 veto=691 bad=3 lat avg=2012us max=31450us
+[python3-7] [INFO] [1790000452.678811304] [gt_bridge]: link=OK input=live steer=+0.000rad v=+1.20 | sent=2997 ok=859 veto=746 bad=3 lat avg=2022us max=31450us
+[python3-7] [INFO] [1790000453.678881904] [gt_bridge]: link=OK input=live steer=+0.000rad v=+1.20 | sent=3097 ok=859 veto=801 bad=3 lat avg=2025us max=31450us
+[python3-7] [INFO] [1790000454.678791923] [gt_bridge]: link=OK input=live steer=+0.000rad v=+1.20 | sent=3197 ok=859 veto=855 bad=3 lat avg=2000us max=31450us
+[python3-7] [INFO] [1790000455.678850363] [gt_bridge]: link=OK input=live steer=+0.000rad v=+1.20 | sent=3297 ok=859 veto=908 bad=3 lat avg=1993us max=31450us
+[python3-7] [INFO] [1790000456.678797951] [gt_bridge]: link=OK input=live steer=+0.000rad v=+1.20 | sent=3397 ok=885 veto=936 bad=3 lat avg=2005us max=31450us
+[python3-7] [INFO] [1790000457.679000042] [gt_bridge]: link=OK input=live steer=+0.000rad v=+1.20 | sent=3497 ok=885 veto=989 bad=3 lat avg=2030us max=31450us
+[python3-7] [INFO] [1790000458.678091317] [gt_bridge]: link=OK input=live steer=+0.000rad v=+1.20 | sent=3597 ok=885 veto=1042 bad=3 lat avg=2037us max=31450us
+[python3-7] [INFO] [1790000459.677980151] [gt_bridge]: link=OK input=live steer=+0.000rad v=+1.20 | sent=3697 ok=885 veto=1096 bad=3 lat avg=2014us max=31450us
+[python3-7] [INFO] [1790000460.678853238] [gt_bridge]: link=OK input=live steer=+0.000rad v=+1.20 | sent=3797 ok=885 veto=1149 bad=3 lat avg=2002us max=31450us
+[python3-6] [INFO] [1790000461.019070935] [gt_cruise]: DISARMED
+[python3-7] [INFO] [1790000461.678445712] [gt_bridge]: link=OK input=none->stop steer=+0.000rad v=+0.00 | sent=3897 ok=885 veto=1201 bad=3 lat avg=1983us max=31450us
+[python3-7] [INFO] [1790000462.678819040] [gt_bridge]: link=OK input=none->stop steer=+0.000rad v=+0.00 | sent=3997 ok=885 veto=1256 bad=3 lat avg=1991us max=31450us
+[python3-7] [INFO] [1790000463.678303926] [gt_bridge]: link=OK input=none->stop steer=+0.000rad v=+0.00 | sent=4097 ok=885 veto=1309 bad=3 lat avg=1972us max=31450us

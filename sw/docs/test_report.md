@@ -21,14 +21,16 @@ All results were measured on the HIBIKI implementation itself (STM32N6570-DK + �
 | Context switch | `tk_wup_tsk()` → higher-priority task running (boot benchmark) | < 5.7 µs | 2000 | 415 ns | 412 ns | 412 ns | 412 ns | **878 ns** | PASS |
 | Interrupt → task | USART2 RX interrupt → gatekeeper task running | < 50 µs | 72 257 | 512 ns | 468 ns | 648 ns | 1.17 µs | **6.1 µs** | PASS |
 | Command verdict | one Jetson command: CRC, replay, envelope, VESC update, verdict TX queued | < 1 ms | 4 538 | 4.7 µs | 4.3 µs | 8.6 µs | 9.6 µs | **15.5 µs** | PASS |
-| **Hazard → brake** | vision (or IMU) raises the hazard → gate task issues the brake frame | < 100 µs | 6 | 30.5 µs | 30.4 µs | 30.9 µs | 30.9 µs | **31.0 µs** | PASS |
+| **Hazard → brake** | vision (or IMU) raises the hazard → gate task issues the brake frame (all runs: 57 person stops + 5 IMU tilts) | < 100 µs | 62 | 27.7 µs | 30 µs | 33 µs | 33.4 µs | **34 µs** | PASS |
 | Frame → decision | camera frame in RAM → NPU inference + decoding + decision | < 100 ms | 1 487 | 30.0 ms | 30.1 ms | 31.1 ms | 31.1 ms | **31.4 ms** | PASS |
 | NPU inference | YOLOX-nano 480×480 INT8 | < 50 ms | 1 487 | 28.5 ms | 28.5 ms | 28.5 ms | 28.5 ms | **29.2 ms** | PASS |
 | Monitor jitter | \|period − 10 ms\| of the 100 Hz IMU monitor | < 100 µs | 9 783 | 318 ns | 138 ns | 1.0 µs | 2.3 µs | **23.2 µs** | PASS |
 | Monitor step (WCET, observed) | I2C read + Kalman update + decision | < 1 ms | 9 784 | 323 µs | 324 µs | 324 µs | 324 µs | **401 µs** | PASS |
-| Link loss → safe state | last valid Jetson command → brake (Jetson frozen 1.5 s) | < 250 ms | 1 | 210 ms | — | — | — | **210 ms** | PASS |
+| Link loss → safe state | last valid Jetson command → brake (Jetson frozen or stack stopped, all runs) | < 250 ms | 7 | 208 ms | 210 ms | 210 ms | 210 ms | **210 ms** | PASS |
 
 Deadline misses (monitor finished after its next release): **0**. UART overruns: **0**.
+One IMU tilt from an early run was logged 1.18 s late because the car was already held by a person hazard at that moment. That is not a reaction latency. It is excluded here, and the current firmware reports such events separately (`IMU … while already stopped`).
+Graphs of all of the above: `sw/results/figures/` (regenerate with `sw/results/make_figures.py`).
 The brake frame itself takes 2.6 ms on the 38400-baud VESC wire after it is issued (a physical limit of the A5 pin, see hw/wiring.md).
 "WCET" here is the observed maximum over the stated n, not a static or probabilistic bound.
 

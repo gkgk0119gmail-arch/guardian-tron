@@ -1,7 +1,7 @@
 #!/bin/zsh
 # Guardian-TRON person-stop demo, one command.
 #
-#   ./run_demo.sh [speed_mps=0.8] [seconds=15] [--no-load] [--gap] [--keep] [--stress] [--freeze]
+#   ./run_demo.sh [speed_mps=0.3] [seconds=60] [--no-load] [--gap] [--keep] [--stress] [--freeze]
 #
 #   --stress : Jetson CPU/IO/memory at 100 % (stress, 6 cores) while armed -> the STM32
 #              metrics must not change (fault injection: overloaded AI computer)
@@ -17,11 +17,11 @@
 # Env: JETSON=orin@<ip> (default orin@172.24.121.67). Car on the floor, someone next to it.
 set -u
 HERE="$(cd "$(dirname "$0")" && pwd)"
-SPEED=0.8; SECS=15; LOAD=1; CTRL=cruise; KEEP=0; STRESS=0; FREEZE=0
+SPEED=0.3; SECS=60; LOAD=1; CTRL=cruise; KEEP=0; STRESS=0; FREEZE=0
 for a in "$@"; do
   case "$a" in
     --no-load) LOAD=0 ;; --gap) CTRL=gap ;; --keep) KEEP=1 ;; --stress) STRESS=1 ;; --freeze) FREEZE=1 ;;
-    *) if [ "$SPEED" = 0.8 ] && [ "$a" != "" ] && [ -z "${SPEED_SET:-}" ]; then SPEED=$a; SPEED_SET=1; else SECS=$a; fi ;;
+    *) if [ "$SPEED" = 0.3 ] && [ "$a" != "" ] && [ -z "${SPEED_SET:-}" ]; then SPEED=$a; SPEED_SET=1; else SECS=$a; fi ;;
   esac
 done
 JETSON=${JETSON:-orin@172.24.121.67}
