@@ -36,4 +36,5 @@ Pin-by-pin tables, baud rates and the board switches: [wiring.md](wiring.md).
 
 | | |
 |---|---|
-| ![the car from above](photos/vehicle_top.jpg) | ![numbered parts](photos/vehicle_bom.png) |
+| ![Bench bring-up: the STM32N6570-DK with the MB1854 camera module on the left, the Jetson Orin Nano on the right, both on the desk](photos/bench_setup.jpg) | ![The DK mounted on the car: camera facing forward on its bracket, USB power bank underneath, Jetson and LiDAR behind](photos/car_mounted.jpg) |
+| Bench bring-up: the DK and its MB1854 camera on the left, the Jetson Orin Nano on the right, joined by the USART2 command link. | On the car: the DK sits on the front deck with the camera facing forward, the Jetson and the VESC harness behind it. |
