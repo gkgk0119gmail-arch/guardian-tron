@@ -14,7 +14,9 @@ All results were measured on the HIBIKI implementation itself (STM32N6570-DK + �
 | Timebase | DWT cycle counter (1.25 ns). Statistics in the firmware: log-linear histogram, 32 buckets per octave (±1.5 % percentile error); min/max exact |
 | Pass/fail | per metric: max ≤ target (strictest reading). "over" = number of samples above the target |
 
-## 2. Timing results (run A: person hazards + Jetson at 100 % CPU + Jetson freeze; run B: link loss)
+## 2. Timing results
+
+Counters come from `run_J` (13 min, the flashed firmware, Jetson commanding at 100 Hz). `Hazard → brake` and `link loss → safe state` are pooled over every committed run, because each single run contains only a few such events.
 
 | Metric | What exactly | Target | n | mean | p50 | p95 | p99 | **max** | Verdict |
 |---|---|---|---|---|---|---|---|---|---|

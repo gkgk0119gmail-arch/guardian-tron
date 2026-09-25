@@ -114,10 +114,20 @@ Then press **Ctrl+C in Terminal 1**. It waits for the board's last metrics table
 Every run above was recorded (`sw/results/raw_logs/`). The same evaluator re-judges a recording, and the graphs in this README are redrawn from the same logs:
 
 ```bash
+# run J: 13 min with the firmware that is flashed on the board. Every timing number
+# in the table below comes from this log
+python3 sw/examples/hibiki_eval.py --offline sw/results/raw_logs/run_J_long_after_report_fix/stm32.log
+
+# run A: person stops with the Jetson at 100 % CPU, then frozen.  run D: MPU and IMU faults
 python3 sw/examples/hibiki_eval.py --offline sw/results/raw_logs/run_A_person_stress_freeze/stm32.log
 python3 sw/examples/hibiki_eval.py --offline sw/results/raw_logs/run_D_mpu_imu_faults/stm32.log
+
 python3 sw/results/make_figures.py
 ```
+
+No single run triggers every check: each one prints `NOT RUN` for the hazards that did not
+happen in it. Run A and run D were recorded before the report-task fix, so their monitor
+jitter is the old 23.2 µs; run J is the current firmware.
 
 To rebuild and reflash the firmware (not needed for evaluation: the board is shipped flashed, and `sw/binaries/` holds the same images), see [sw/docs/setup_guide.md](sw/docs/setup_guide.md).
 
@@ -151,9 +161,9 @@ Bill of materials with quantities and evaluation needs: [hw/README.md](hw/README
 flowchart LR
   L["UST-10LX LiDAR<br/>Ethernet · 40 Hz scans"] --> J["Jetson Orin Nano<br/>ROS 2 gap_follower → speed, steering"]
   J --> U["USB-TTL<br/>UART 115200 · CMD 15 B @ 100 Hz"]
-  U --> S["STM32N6570-DK · μT-Kernel 3.0<br/>CRC · replay · envelope ≤ 15.5 µs · watchdog 200 ms"]
+  U --> S["STM32N6570-DK · μT-Kernel 3.0<br/>CRC · replay · envelope ≤ 13.4 µs · watchdog 200 ms"]
   C["Camera module MB1854<br/>IMX335 CSI-2 · ToF / IMU I²C"] --> N["Neural-ART NPU person detection<br/>independent of the Jetson"]
-  N -- "hazard → brake in 31 µs" --> S
+  N -- "hazard → brake in ≤ 34 µs" --> S
   S --> V["VESC 6 MkVI<br/>UART 38400 · servo + ERPM"]
   V --> M["BLDC motor · steering servo<br/>no direct path from the Jetson"]
   style S fill:#fff4ec,stroke:#e8590c,stroke-width:2px

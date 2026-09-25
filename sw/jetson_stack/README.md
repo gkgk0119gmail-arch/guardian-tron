@@ -1,121 +1,79 @@
-# SDV Safety Coprocessor — Runnable Stack
+# Jetson side
 
-Runnable implementation of the Guardian-TRON heterogeneous safety coprocessor
-project for SDVs. The Jetson (main AI ECU) and the STM32N6570-DK (safety
-gatekeeper) are linked over UART, so normal driving and three threat scenarios
-can actually be run end to end.
+Everything that runs on the Jetson Orin Nano, the AI computer of the car. The Jetson
+plans the path and sends drive commands; it has no wire to the motor. The STM32N6570-DK
+running μT-Kernel 3.0 decides whether those commands reach the VESC — see the
+[top-level README](../../README.md).
 
-## What works right now (SIM mode)
+```
+ros2/         what runs on the car today (ROS 2 Humble)
+bench/        jitter_probe.c: the Linux side of the RTOS-vs-Linux comparison
+gatekeeper/   the safety logic in plain C, and the SIL rig it was developed in
+jetson/       the earlier software-in-the-loop ECU and threat scripts
+docs/         link protocol, and the porting notes we worked from
+```
 
-Even without the real STM32 board, the gatekeeper's **actual safety-logic C
-code** is compiled natively on this Jetson and run behind a virtual UART (PTY),
-and the Jetson ECU/threat scripts exchange real UART frames with it.
-`gatekeeper/src/*.c` is the same code that goes onto the real board unchanged
-(see `docs/STM32_PORT.md` for details), so the safety decision logic verified
-here behaves identically on the real board.
+## ros2/ — driving the car
+
+Installed on the Jetson at `~/guardian/`. The evaluation runbook in the top-level README
+uses only `hibiki.sh`.
+
+| File | What |
+|---|---|
+| `hibiki.sh` | one-word commands: `start [speed] [cruise\|gap]`, `arm`, `disarm`, `stress`, `freeze`, `status`, `stop` |
+| `gt_bridge.py` | ROS 2 node: `/drive` → 15-byte CMD at 100 Hz over `/dev/ttyUSB0`, and back from the 12-byte VERDICT. Counts approved / vetoed / malformed and the round-trip time |
+| `gt_cruise.py` | constant-speed straight-line controller, for repeatable timing runs |
+| `guardian_gap.launch.py` | brings up the LiDAR (`urg_node`), the planner (gap follower or cruise) and the bridge |
+
+The STM32 owns the motor, so `vesc_driver` must never run next to this stack.
+
+`/dev/ttyUSB0` is the USB-TTL adapter. Its PL2303 driver is not in the stock L4T kernel,
+so we built the module and load it at boot; if the device node is missing after a reboot,
+see step 3 of [`sw/docs/setup_guide.md`](../docs/setup_guide.md). Unplugging and replugging
+the adapter also brings it back.
+
+## bench/ — the Linux comparison
+
+`jitter_probe.c` runs the same 100 Hz periodic loop as the STM32's safety monitor, with
+either a relative or an absolute sleep, and reports the period error.
 
 ```bash
-cd /home/orin/미래모빌리티
-
-# 1) Normal driving, 15 seconds
-./jetson/scripts/run_vehicle.sh 15
-
-# 2) Threat 1: FGSM adversarial perception attack
-./jetson/scripts/run_threat1.sh
-
-# 3) Threat 2: UART link spoofing/replay/fuzzing
-./jetson/scripts/run_threat2.sh
-
-# 4) Threat 3: OTA/firmware signature tampering vs root of trust
-./jetson/scripts/run_threat3.sh
+gcc -O2 -o jitter_probe bench/jitter_probe.c
+./jitter_probe abs 20                     # then again under: stress --cpu $(nproc) --io 2 --vm 2
 ```
 
-## Moving to the real board (STM32N6570-DK)
+Our measurements are in [`sw/results/linux_jitter_jetson.txt`](../results/linux_jitter_jetson.txt)
+and section 3 of the [test report](../docs/test_report.md).
 
-Physical wiring is already verified and complete: the Jetson (`/dev/ttyUSB0`)
-is wired directly to STM32N6570-DK Arduino D0/D1 (USART2) through a USB-TTL
-adapter, 115200 8N1 (see the "Verified" table in `docs/STM32_PORT.md`).
+## gatekeeper/ — the safety logic, and where it grew up
 
-1. `docs/STM32_PORT.md` — create the real-board project with STM32CubeIDE/CubeMX
-   (enable USART2), port `gatekeeper/src/*.c` + `gatekeeper/stm32/*.c`
-   unchanged, and integrate μT-Kernel 3.0 BSP2.
-2. After porting, just add `--real` to each script and it connects to the real
-   board (`/dev/ttyUSB0`) instead of the SIM gatekeeper:
-   ```bash
-   ./jetson/scripts/run_vehicle.sh 15 --real
-   ```
-3. After a reboot, the PL2303 kernel module must be reloaded for `/dev/ttyUSB0`
-   to appear (it is not included in this Jetson's kernel by default, so we built
-   it ourselves, `toolchain/pl2303-build/`):
-   ```bash
-   sudo modprobe usbserial
-   sudo insmod /home/orin/미래모빌리티/toolchain/pl2303-build/pl2303.ko
-   sudo udevadm trigger
-   ```
+Hardware-independent C11 with no HAL and no RTOS calls, so the same source builds for
+Linux and for the board. `gatekeeper_core.c` and `protocol.c` are **byte-identical** to
+[`sw/guardian_vision/gt/`](../guardian_vision/gt/), the copy the firmware compiles.
+`safety_envelope.c` is the one file that differs: the firmware's version carries the
+limits we measured on this car (steering capped at ±17.5°, speed −0.5…2.0 m/s), while the
+copy here keeps the generic limits the SIL rig was written against.
 
-## Layout
+`sim/` runs that logic on a Linux pseudo-terminal, so the protocol and the veto decisions
+can be exercised without a board (`make sim`). `stm32/` holds the bare-metal bridges from
+before the μT-Kernel port; the firmware now uses its own `gt_uart.c` / `gt_vesc.c`
+instead, and these are kept for reference.
 
-```
-gatekeeper/            Gatekeeper core logic (hardware-independent C, ported to the real board unchanged)
-  include/              protocol.h, safety_envelope.h, gatekeeper_core.h
-  src/                   Implementation
-  sim/main_sim.c         SIM runner on a Linux PTY (not ported)
-  sim/main_udp.c         UDP SIM runner (for the Ethernet path, not ported)
-  stm32/                 Real-board bridges (added to the CubeIDE project as-is)
-    gatekeeper_uart_bridge.c/h   USART2 interrupt-driven bridge (the adopted path)
-    gatekeeper_lwip_udp.c/h      lwIP-based bridge (alternative Ethernet path)
-    dwt_timing.c/h                Shared DWT cycle-counter utility
-    vesc_uart.c/h                 C port of the VESC protocol (STM32-only drive path)
-    local_safety_monitor.c/h      STM32 onboard camera + NPU collision-probability stub
-  Makefile               make sim / make udp
+## jetson/ — earlier software-in-the-loop work
 
-jetson/
-  ecu/                  Main AI ECU (perception inference + UART/UDP transmit)
-    perception.py        Lightweight neural net (numpy, real gradient-based FGSM possible)
-    protocol.py           Byte-for-byte identical to gatekeeper/include/protocol.h
-    uart_link.py           pyserial wrapper (default transport, /dev/ttyUSB0)
-    udp_link.py             UDP socket wrapper (alternative path)
-    link_factory.py          Shared helper to select either transport from the CLI
-    vesc.py                  VESC motor controller UART protocol (verified on hardware)
-    lidar.py                 Hokuyo UST-10LX Ethernet driver (verified on hardware)
-    main_ecu.py               Normal driving loop
-  threats/
-    threat1_fgsm.py        Threat 1: adversarial perception attack
-    threat2_injection.py   Threat 2: link spoofing/replay/fuzzing
-    threat3_ota_tamper.py  Threat 3: OTA signature tampering vs RoT
-  scripts/               run_*.sh launchers
+The ECU loop and three threat scenarios (adversarial perception, link spoofing and
+replay, OTA signature tampering) that we used to develop the gatekeeper before the board
+was wired. Not part of the contest measurements, kept because the replay and malformed-frame
+defences in the shipped firmware came out of running them. `jetson/ecu/vesc.py` and
+`jetson/ecu/lidar.py` were verified against the real hardware.
 
-toolchain/
-  pl2303-build/          Build of the PL2303 USB-TTL driver missing from this Jetson's kernel
+For faults injected into the *shipped* system instead, use `pc_host.py --scenario` (see
+[`sw/tools/`](../tools/)) or `hibiki.sh stress | freeze`.
 
-docs/
-  PROTOCOL.md            Frame format, safety envelope definition
-  WIRING.md              Wiring checklist (early investigation; STM32_PORT.md is current)
-  STM32_PORT.md          Real-board porting roadmap, confirmed wiring, current limitations
-```
+## docs/
 
-## Safety decision logic (paper Sec. IV.3, implementation of Eq. 2-4)
-
-- Absolute limits: `|steer_deg| <= 540`, `accel_mps2 ∈ [-10, 4]`
-- Rate-of-change limits (at 100Hz): `|Δsteer_deg| <= 10`, `|Δaccel_mps2| <= 1`
-- On violation, hold the last approved command (u_safe) and transition to fail-safe
-- Additionally: on sequence replay/rollback detection, veto regardless of whether
-  the envelope check passes (`gatekeeper/src/gatekeeper_core.c`) — a defense added
-  after actually running Threat 2 revealed that the envelope alone cannot stop
-  "retransmissions that look like normal values".
-
-## Known limitations (honestly)
-
-- The FGSM attack's abrupt step changes are reliably blocked (rate-of-change
-  limit), but, as paper Sec. VI.2 itself acknowledges, **slowly accumulating
-  small drift cannot be caught by the gatekeeper alone** — running
-  `run_threat1.sh` shows the onset of the attack being VETOed, then switching to
-  APPROVED once it holds at a similar magnitude. This is not a bug; under the
-  defense-in-depth philosophy it must be covered by robustness at the perception
-  stage.
-- perception.py is not the paper's actual CUDA PilotNet but a two-layer neural
-  net written in numpy (torch is not installed on this Jetson; installing the
-  Jetson-specific wheel is separate work). It can be swapped for the real
-  PilotNet as long as the `predict()`/`input_gradient()` interface matches.
-- μT-Kernel 3.0, the actual STM32N6 secure-boot header, and the NPU IDS are not
-  yet ported — see the `docs/STM32_PORT.md` roadmap.
+| File | Status |
+|---|---|
+| [`PROTOCOL.md`](docs/PROTOCOL.md) | current — the 15-byte CMD / 12-byte VERDICT frames, CRC and sequence rules, as shipped |
+| [`STM32_PORT.md`](docs/STM32_PORT.md) | historical — the porting plan we worked from. The port is finished; [`hw/wiring.md`](../../hw/wiring.md) and [`sw/docs/setup_guide.md`](../docs/setup_guide.md) describe what was actually built |
+| [`WIRING.md`](docs/WIRING.md) | historical — the open questions before the car was wired. Superseded by [`hw/wiring.md`](../../hw/wiring.md) |

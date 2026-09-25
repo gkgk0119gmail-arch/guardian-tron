@@ -5,3 +5,9 @@ abs n=2000 period-error ns: min -293834 p50 -193 p99 15967 p99.9 79649 max 30573
 ## under stress --cpu 6 --io 2 --vm 2 --vm-bytes 256M
 rel n=2000 period-error ns: min 25151 p50 64705 p99 151139 p99.9 3274269 max 3337470 | mean 72640 rms 128056
 abs n=2000 period-error ns: min -222663 p50 -97 p99 44512 p99.9 121922 max 234629 | mean 28 rms 15690
+
+# An earlier session of the same probe on the same Jetson gave: idle rel max 224 us,
+# idle abs max 221 us, loaded rel max 3888 us, loaded abs max 445 us. That console
+# output was not saved to a file, so only the session above is reproducible from this
+# repository. The test report lists both sessions and computes the jitter reduction
+# from the session above, which is the more favourable one for Linux.

@@ -20,10 +20,10 @@ Setup for the manual route: BOOT0 and BOOT1 both left, ST-LINK USB-C to the PC, 
 | # | Do | Expect | Pass if |
 |---|---|---|---|
 | E1 | Power on | `microT-Kernel Version 3.00`, then the `[rtos]` task table (gate 8, imu 10, vision 20, report 25, log 30) | both lines present |
-| E2 | Wait 10 s | `[metric] ctx_switch: n=2000 mean 444ns p50 460ns p95 460ns p99 460ns max 872ns | target < 5700ns over 0 -> PASS` | max < 5.7 µs (we measured 0.88 µs) |
+| E2 | Wait 10 s | `[metric] ctx_switch: n=2000 mean 444ns p50 460ns p95 460ns p99 460ns max 872ns | target < 5700ns over 0 -> PASS` | max < 5.7 µs (we measured 0.87 µs) |
 | E3 | Watch 30 s | `[vision] 15.0 fps \| NPU 28… us`, `isp_err 0`; LCD shows the camera | 14–15 fps, NPU < 50 ms |
-| E4 | Watch the `[perf] cpu` line | CPU share per task, e.g. `idle 48 % gate 0.1 % imu 3.2 % vision 48 %` | gate + imu ≈ 3 % while the NPU runs |
-| E5 | Watch the `[metric] monitor_jitter` line | 100 Hz safety monitor jitter while the NPU runs at full load | max < 100 µs (we measured ≤ 23 µs) |
+| E4 | Watch the `[perf] cpu` line | CPU share per task, e.g. `idle 47 % gate 0.2 % imu 3.2 % vision 49 %` | gate + imu ≈ 3.4 % while the NPU runs |
+| E5 | Watch the `[metric] monitor_jitter` line | 100 Hz safety monitor jitter while the NPU runs at full load | max < 100 µs (we measured ≤ 11.9 µs) |
 | E6 | Watch the `[stack]` line | stack high-water mark per task | all < 80 % |
 
 ## Mode DEMO_HAZARD: AI result → real-time safety action
@@ -55,18 +55,28 @@ On our Jetson Orin Nano: max period error 221 µs idle and 445 µs (absolute sle
 
 ## The summary table
 
-After a few minutes the firmware prints, every 10 s:
+After a few minutes the firmware prints, every 10 s. This is the last block of our
+reference run, copied unchanged from
+`sw/results/raw_logs/run_J_long_after_report_fix/stm32.log` (13 min, the same firmware
+that is flashed on the board):
 
 ```
 [metric] ctx_switch: n=2000 mean 444ns p50 460ns p95 460ns p99 460ns max 872ns | target < 5700ns over 0 -> PASS
 [metric] irq_to_task: n=695600 mean 546ns p50 520ns p95 680ns p99 1104ns max 9501ns | target < 50.0us over 0 -> PASS
 [metric] gate_cmd_verdict: n=43119 mean 5479ns p50 4416ns p95 8576ns p99 8832ns max 13.4us | target < 1000.0us over 0 -> PASS
-[metric] hazard_to_brake: n=66 mean 27.8us p50 30us p95 33us p99 33.3us max 34us | target < 100.0us over 0 -> PASS
-[metric] frame_to_decision: ... max 31.4ms | target < 100.0ms over 0 -> PASS
-[metric] npu_inference: ... max 29.2ms | target < 50.0ms over 0 -> PASS
+[metric] hazard_to_brake: n=4 mean 30.3us p50 30.4us p95 30.7us p99 30.7us max 30.7us | target < 100.0us over 0 -> PASS
+[metric] frame_to_decision: n=12160 mean 29.8ms p50 29.6ms p95 30.6ms p99 30.6ms max 31.4ms | target < 100.0ms over 0 -> PASS
+[metric] npu_inference: n=12160 mean 28.5ms p50 28.5ms p95 28.5ms p99 28.5ms max 28.7ms | target < 50.0ms over 0 -> PASS
 [metric] monitor_jitter: n=80932 mean 235ns p50 101ns p95 840ns p99 1968ns max 11.9us | target < 100.0us over 0 -> PASS
 [metric] monitor_step: n=80933 mean 322.8us p50 323.5us p95 323.5us p99 323.5us max 422.1us | target < 1000.0us over 0 -> PASS
-[metric] link_loss_to_safe: n=1 ... max 210.0ms | target < 250.0ms over 0 -> PASS
+[metric] link_loss_to_safe: no samples yet
 ```
+
+Each counter only covers what happened in that one run: `run_J` had 4 person stops and
+nobody froze the Jetson, so `link_loss_to_safe` stayed empty. Pooled over every committed
+run, `hazard_to_brake` is n = 66, max 34 µs (61 person stops + 5 IMU tilts) and
+`link_loss_to_safe` is n = 7, max 210 ms. Those pooled numbers are what
+`sw/results/latency_results.csv`, the graphs and the test report quote; `make_figures.py`
+recomputes them from the logs.
 
 `irq_to_task`, `gate_cmd_verdict` and `link_loss_to_safe` need a host sending commands (the Jetson on the car, or `pc_host.py` on a USB-TTL). `hazard_to_brake` needs a person or an IMU event. Our reference runs are in `sw/results/`.

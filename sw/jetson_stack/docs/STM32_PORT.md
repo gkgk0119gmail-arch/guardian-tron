@@ -1,4 +1,12 @@
-# STM32N6570-DK Real-Board Port — Remaining Work
+# STM32N6570-DK Real-Board Port — the plan we worked from
+
+> **Status: historical.** This was our porting plan while the board was still on the
+> bench. The port is finished: the firmware in [`sw/guardian_vision/`](../../guardian_vision/)
+> runs μT-Kernel 3.0 on the STM32N6570-DK and is measured in
+> [`sw/docs/test_report.md`](../../docs/test_report.md). For the wiring as built see
+> [`hw/wiring.md`](../../../hw/wiring.md), and for the build see
+> [`sw/docs/setup_guide.md`](../../docs/setup_guide.md). Kept because it records why each
+> choice was made.
 
 > **Updated 2026-09-13**: Final check of the actual wiring — the Jetson is wired
 > directly to the STM32N6570-DK Arduino connector **D0/D1 (USART2, PF6/PD5)**
@@ -32,7 +40,7 @@ counter). The logic is completely identical; only the transport layer differs.
 Must be run after every reboot:
 ```bash
 sudo modprobe usbserial
-sudo insmod /home/orin/미래모빌리티/toolchain/pl2303-build/pl2303.ko
+sudo insmod <repo on the Jetson>/toolchain/pl2303-build/pl2303.ko
 sudo udevadm trigger
 # verify with ls /dev/ttyUSB0
 ```
@@ -177,3 +185,20 @@ The STM32N6 is a recently released chip, so:
   as running the SafetyMonitor as a separate task, only appear after integration).
 - ❌ Real secure-boot pipeline — concept only (Ed25519 demo), not the STM32N6-specific
   header format.
+
+---
+
+## How the open items above turned out
+
+Every ❌ on this page was closed before the contest submission. This table is the map
+from the plan to the finished work; the numbers all come from
+[`sw/docs/test_report.md`](../../docs/test_report.md).
+
+| Open item above | What was actually built |
+|---|---|
+| Response from the STM32 side; firmware not loaded | [`sw/guardian_vision/`](../../guardian_vision/) — a Makefile project on μT-Kernel 3.0 BSP2, flashed and running. Images in [`sw/binaries/`](../../binaries/) |
+| USART number for the VESC was assumed | USART3 confirmed, and the RX/TX pins turned out to be **swapped** (A5 is input-only), at 38400 baud — [`hw/wiring.md`](../../../hw/wiring.md) |
+| Camera + NPU pipeline does not exist; `local_safety_monitor.c` is a stub | Real pipeline: IMX335 → DCMIPP → YOLOX-nano INT8 on the Neural-ART NPU at 15 fps, person class, distance from box height. Runs as the `vision` task |
+| No microsecond latency measurement on the real board | DWT cycle counter (1.25 ns) with a log-linear histogram in the firmware. Hazard → brake 34 µs max over 66 events; the full table is in the test report |
+| Bare-metal structure, no μT-Kernel scheduling | Five tasks at fixed priorities — gate 8, imu 10, vision 20, report 25, log 30 — plus a dispatcher hook, an MPU view per task and a mutex with priority inheritance on the shared I2C bus |
+| Secure boot is concept only | Out of scope for this submission. The board boots the ST FSBL from NOR flash and the signed application image; no custom root of trust was built |

@@ -1,4 +1,9 @@
-# Real-Board Wiring (To Be Confirmed)
+# Real-Board Wiring — early investigation
+
+> **Status: historical.** These were the open questions before the car was wired. They
+> are all answered now — the pins, colours, baud rates and board switches as built are in
+> [`hw/wiring.md`](../../../hw/wiring.md), with a cable colour map in
+> [`hw/photos/pinmap.svg`](../../../hw/photos/pinmap.svg).
 
 SIM mode currently runs the gatekeeper inside the Jetson over a virtual UART
 (PTY), so no physical wiring is needed. **For in-vehicle integration, the items
