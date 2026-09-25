@@ -181,7 +181,7 @@ flowchart LR
 | 100 Hz monitor period jitter (NPU at full load) | 42 % below Linux | **11.9 µs** over 80 932 periods with the Jetson commanding at 100 Hz (p99 2.0 µs, 0 over 100 µs). Linux on the Jetson under load: 3.3–3.9 ms (**99.6 % lower**). See [Fixed issue](#fixed-issue-rare-monitor-jitter-spikes) |
 | Jetson frozen → car in safe state | < 250 ms | **210 ms** (n = 7, watchdog 200 ms) |
 | Camera frame → person decision | < 100 ms | 31.4 ms (NPU 28.5 ms) |
-| CPU used by the safety tasks (gate + imu) | < 3 % | 3.2 % |
+| CPU used by the safety tasks (gate + imu) | < 3 % | 3.4 % (gate 0.2 % + imu 3.2 %) — the one target we did not meet: the IMU is polled on I2C, see [test report](sw/docs/test_report.md#4-cpu-and-memory) |
 
 All numbers are printed by the firmware itself (DWT cycle counter, 1.25 ns resolution). How they were measured is in [sw/docs/test_report.md](sw/docs/test_report.md). Raw logs and CSV files are in [sw/results/](sw/results/). The graphs below are regenerated from those logs by [`sw/results/make_figures.py`](sw/results/make_figures.py).
 

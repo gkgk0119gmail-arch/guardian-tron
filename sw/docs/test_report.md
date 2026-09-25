@@ -54,7 +54,7 @@ On the Jetson, the host-side round-trip time of a command through the USB-TTL is
 | Item | Measured |
 |---|---|
 | CPU share (dispatcher hook, 5 s windows, run J) | vision 49.2 %, imu 3.2 %, gate 0.2 %, report and log < 0.1 %, idle 47.2 % |
-| Safety-task overhead (gate + imu) | **3.2 %** (target < 3 %: not met. The IMU is read by polling I2C at 400 kHz. An interrupt-driven read conflicted with the camera's use of the same bus, so we kept polling) |
+| Safety-task overhead (gate + imu) | **3.4 %** (target < 3 %: not met. The IMU is read by polling I2C at 400 kHz. An interrupt-driven read conflicted with the camera's use of the same bus, so we kept polling) |
 | Task switches | ≈ 2 600 /s while driving |
 | Stack high-water mark | gate 1 012 / 4 096 B (24 %), imu 1 164 / 4 096 B (28 %), vision 1 508 / 32 768 B (4 %), report 1 412 / 2 048 B (68 %), log 444 / 1 024 B (43 %) |
 | AXISRAM1 (1 MB) | code 151 KB, read-only data 468 KB, data 54 KB, bss 61 KB (includes the 41 KB of static task stacks), kernel heap for the rest |
