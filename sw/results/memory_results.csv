@@ -9,7 +9,8 @@ AXISRAM1 (1 MB),.mtk_exctbl,848,
 PSRAM (32 MB),.psram_section,2304000,
 NOR flash,network weights,1201104,NPU reads in place (memory-mapped)
 NOR flash,guardian_sign.bin,675168,copied to AXISRAM1 by the FSBL
-stack,gate,1384,of 4096 B (33 %)
-stack,imu,1008,of 4096 B (24 %)
+stack,gate,1012,of 4096 B (24 %)
+stack,imu,1164,of 4096 B (28 %)
 stack,vision,1508,of 32768 B (4 %)
-stack,log,436,of 1024 B (42 %)
+stack,log,444,of 1024 B (43 %)
+stack,report,1412,of 2048 B (68 %)

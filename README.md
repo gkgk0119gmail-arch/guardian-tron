@@ -170,20 +170,18 @@ flowchart LR
   W --> K["Buck converter 5 V 3 A"] --> S["STM32N6570-DK<br/>USB-C CN6 · never powered from the Jetson's USB"]
 ```
 
-<!-- TODO photos: demo GIF (person steps in -> car stops), STM32N6570-DK LCD close-up, desk evaluation kit -->
-
 ## Measured on the board (not targets)
 
 | Metric | Design target | Measured (max, n) |
 |---|---|---|
-| Context switch (`tk_wup_tsk` → task running) | < 5.7 µs | **0.88 µs** (mean 0.42 µs, n = 2000) |
-| Hazard detected → brake issued | < 100 µs | **34 µs** (person stops: mean 30.1 µs; IMU tilts: 1 µs; n = 62) |
-| USART interrupt → gatekeeper task | < 50 µs | **6.1 µs** (p99 1.2 µs, n = 72 257) |
-| Jetson command → verdict + actuation | < 1 ms | **15.5 µs** (p99 9.6 µs, n = 4 538) |
-| 100 Hz monitor period jitter (NPU at full load) | 42 % below Linux | **12.5 µs** over 141 054 periods (23.5 min, p99 2.9 µs, 0 over 100 µs) with the Jetson commanding at 100 Hz; 23 µs with the Jetson at 100 % CPU. Linux on the Jetson under load: 3.3–3.9 ms (≥ 99.3 % lower). See [Fixed issue](#fixed-issue-rare-monitor-jitter-spikes) |
+| Context switch (`tk_wup_tsk` → task running) | < 5.7 µs | **0.87 µs** (mean 0.44 µs, n = 2 000) |
+| Hazard detected → brake issued | < 100 µs | **34 µs** (61 person stops: mean 30 µs; 5 IMU tilts: 1 µs; n = 66) |
+| USART interrupt → gatekeeper task | < 50 µs | **9.5 µs** (p99 1.1 µs, n = 695 600) |
+| Jetson command → verdict + actuation | < 1 ms | **13.4 µs** (p99 8.8 µs, n = 43 119) |
+| 100 Hz monitor period jitter (NPU at full load) | 42 % below Linux | **11.9 µs** over 80 932 periods with the Jetson commanding at 100 Hz (p99 2.0 µs, 0 over 100 µs). Linux on the Jetson under load: 3.3–3.9 ms (**99.6 % lower**). See [Fixed issue](#fixed-issue-rare-monitor-jitter-spikes) |
 | Jetson frozen → car in safe state | < 250 ms | **210 ms** (n = 7, watchdog 200 ms) |
 | Camera frame → person decision | < 100 ms | 31.4 ms (NPU 28.5 ms) |
-| CPU used by the safety tasks (gate + imu) | < 3 % | 3.4 % |
+| CPU used by the safety tasks (gate + imu) | < 3 % | 3.2 % |
 
 All numbers are printed by the firmware itself (DWT cycle counter, 1.25 ns resolution). How they were measured is in [sw/docs/test_report.md](sw/docs/test_report.md). Raw logs and CSV files are in [sw/results/](sw/results/). The graphs below are regenerated from those logs by [`sw/results/make_figures.py`](sw/results/make_figures.py).
 
@@ -193,7 +191,7 @@ All numbers are printed by the firmware itself (DWT cycle counter, 1.25 ns resol
 
 ![100 Hz loop jitter: μT-Kernel vs Linux](sw/results/figures/jitter_rtos_vs_linux.png)
 
-![57 real person stops: AI part vs RTOS part](sw/results/figures/person_stop_latency.png)
+![61 real person stops: AI part vs RTOS part](sw/results/figures/person_stop_latency.png)
 
 ![Every hazard ended in the safe state](sw/results/figures/faults_to_safe_state.png)
 
@@ -220,7 +218,7 @@ All numbers are printed by the firmware itself (DWT cycle counter, 1.25 ns resol
 
 ## Fixed issue: rare monitor jitter spikes
 
-The first long runs on the car (`sw/results/raw_logs/run_F…run_I`, 121 034 monitor periods) had 20 periods (0.017 %) that started 0.1–0.82 ms late, and a longest monitor step of 1.14 ms. No 10 ms deadline was missed. Cause: every 10 s the `gate` task (priority 8, above the `imu` monitor at 10) computed the percentile table and formatted the console report itself, a 0.5–0.8 ms burst. The reports now come from a separate `report` task at priority 25, below every safety task. With that firmware (`run_J`, and the flashed image in `sw/binaries/`): **0 of 141 054 periods over 100 µs, max 12.5 µs, longest step 434 µs**. The older logs are kept unchanged, so `hibiki_eval.py --offline` on `run_F…run_I` still shows the two FAIL lines.
+The first long runs on the car (`sw/results/raw_logs/run_F…run_I`, 121 034 monitor periods) had 20 periods (0.017 %) that started 0.1–0.82 ms late, and a longest monitor step of 1.14 ms. No 10 ms deadline was missed. Cause: every 10 s the `gate` task (priority 8, above the `imu` monitor at 10) computed the percentile table and formatted the console report itself, a 0.5–0.8 ms burst. The reports now come from a separate `report` task at priority 25, below every safety task. With that firmware (`run_J`, and the flashed image in `sw/binaries/`): **0 of 80 932 periods over 100 µs, max 11.9 µs, longest step 422 µs**. The older logs are kept unchanged, so `hibiki_eval.py --offline` on `run_F…run_I` still shows the two FAIL lines.
 
 ## Repository layout
 

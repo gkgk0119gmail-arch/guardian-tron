@@ -1,0 +1,35 @@
+MIT License
+
+Copyright (c) 2026 Yun-sang Nam, Min-jun Song, Na-yeon Kwak (Yonsei University)
+HIBIKI / Guardian-TRON — TRON Programming Contest 2026 entry
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+---
+
+This MIT License covers the code written by the team:
+  sw/guardian_vision/os/*, sw/guardian_vision/gt/*, sw/examples/*, sw/tools/*,
+  sw/jetson_stack/*, sw/results/make_figures.py, sw/run_demo.sh, sw/docs/*, hw/*
+
+Third-party components keep their own licenses and are listed, with their
+rights holders and sources, in sw/docs/third_party_software.md:
+  - micro T-Kernel 3.0 BSP2 (TRON Forum, Ken Sakamura) — T-License 2.2 / 2.1
+  - STM32 HAL, BSP and CMSIS (STMicroelectronics, Arm) — BSD-3-Clause, Apache-2.0
+  - STM32 camera middleware, ST Edge AI runtime, YOLOX-nano model,
+    object-detection application sources (STMicroelectronics) — SLA0044

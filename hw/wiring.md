@@ -21,6 +21,8 @@ All connections below were checked on the board. Signal levels are 3.3 V.
 
 The car ships with every cable below already connected. Nothing has to be re-wired.
 
+![Cable colour map](photos/pinmap.svg)
+
 **Jetson ↔ STM32 command link:** a PL2303 USB-TTL cable, USB end in the Jetson.
 
 | Wire colour | USB-TTL signal | STM32N6570-DK pin (Arduino header) | MCU pin / function |

@@ -42,9 +42,21 @@ Live camera image with an overlay:
 | `[vision] 15.0 fps \| NPU 28515 us \| persons 1 (tallest h 42%) \| clear/HAZARD` | 1 s | vision pipeline: frame rate, NPU time, detections, hazard state, `isp_err` = camera I2C errors |
 | `[imu] roll pitch yaw a_h \| 100 Hz period … jitter …` | 5 s | IMU attitude (Kalman), monitor period and jitter, step time |
 | `[perf] cpu idle … gate … imu … vision …` | 5 s | CPU share per task (from the dispatcher hook) and task switches per second |
-| `[metric] name: n mean p50 p95 p99 max \| target < … over N -> PASS/FAIL` | 10 s | cumulative timing statistics since boot against the design targets |
+| `[metric] name: n mean p50 p95 p99 max \| target < … over N -> PASS/FAIL` | 10 s | cumulative timing statistics since boot against the design targets (printed by the `report` task, priority 25, so reporting never delays a safety task) |
 | `[stack] gate 1384/4096 B …` | 10 s | stack high-water mark per task |
 | `[gate] STOP …`, `[gate] SLOW …`, `[fault] …` | event | safety events with their latency breakdown |
+
+## Tasks
+
+| Task | Priority | Released by | Deadline | If it fails |
+|---|---|---|---|---|
+| `gate` | 8 | Jetson command (UART interrupt → event flag), hazard kick | 1 ms | 200 ms without a valid command → brake |
+| `imu` | 10 | cyclic handler every 10 ms | 10 ms | tilt / impact → brake |
+| `vision` | 20 | camera frame (≈ 15 fps) | 100 ms | no frame for 500 ms → car held |
+| `report` | 25 | every 1 s | best effort | a late report, nothing else |
+| `log` | 30 | ring buffer not empty | best effort | drops lines and counts them |
+
+The boot log prints this table as `[rtos]` lines.
 
 ## Errors and recovery
 

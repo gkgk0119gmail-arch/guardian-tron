@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="628" viewBox="0 0 1000 628" font-family="DejaVu Sans, Arial, Helvetica, sans-serif">
+<rect width="1000" height="628" fill="#FFFFFF"/>
+<text x="28" y="44" font-size="26" font-weight="700" fill="#111A2E">Guardian-TRON cable colour map</text>
+<text x="28" y="70" font-size="15" fill="#5A6578">STM32N6570-DK Arduino header, as wired on the car. All signals are 3.3 V.</text>
+<rect x="390" y="110" width="230" height="430" rx="14" fill="#FBFBF8" stroke="#111A2E" stroke-width="2"/>
+<text x="505.0" y="146" font-size="17" font-weight="700" fill="#111A2E" text-anchor="middle">STM32N6570-DK</text>
+<text x="505.0" y="168" font-size="14" fill="#5A6578" text-anchor="middle">μT-Kernel 3.0 gatekeeper</text>
+<rect x="381" y="189" width="18" height="22" rx="4" fill="#111A2E"/>
+<text x="412" y="199" font-size="17" font-weight="700" fill="#111A2E" text-anchor="start">D0</text>
+<text x="412" y="216" font-size="12" fill="#5A6578" text-anchor="start">PF6 · USART2 RX</text>
+<rect x="381" y="237" width="18" height="22" rx="4" fill="#111A2E"/>
+<text x="412" y="247" font-size="17" font-weight="700" fill="#111A2E" text-anchor="start">D1</text>
+<text x="412" y="264" font-size="12" fill="#5A6578" text-anchor="start">PD5 · USART2 TX</text>
+<rect x="381" y="285" width="18" height="22" rx="4" fill="#111A2E"/>
+<text x="412" y="295" font-size="17" font-weight="700" fill="#111A2E" text-anchor="start">GND</text>
+<text x="412" y="312" font-size="12" fill="#5A6578" text-anchor="start">ground</text>
+<rect x="611" y="369" width="18" height="22" rx="4" fill="#111A2E"/>
+<text x="598" y="379" font-size="17" font-weight="700" fill="#111A2E" text-anchor="end">D5</text>
+<text x="598" y="396" font-size="12" fill="#5A6578" text-anchor="end">PE10 · USART3 TX</text>
+<rect x="611" y="417" width="18" height="22" rx="4" fill="#111A2E"/>
+<text x="598" y="427" font-size="17" font-weight="700" fill="#111A2E" text-anchor="end">A5</text>
+<text x="598" y="444" font-size="12" fill="#5A6578" text-anchor="end">PB10 · USART3 RX</text>
+<rect x="611" y="465" width="18" height="22" rx="4" fill="#111A2E"/>
+<text x="598" y="475" font-size="17" font-weight="700" fill="#111A2E" text-anchor="end">GND</text>
+<text x="598" y="492" font-size="12" fill="#5A6578" text-anchor="end">ground</text>
+<rect x="40" y="175" width="200" height="150" rx="12" fill="#FFFFFF" stroke="#5A6578" stroke-width="2"/>
+<text x="140.0" y="203" font-size="15" font-weight="700" fill="#111A2E" text-anchor="middle">USB-TTL (PL2303)</text>
+<text x="140.0" y="223" font-size="12" fill="#5A6578" text-anchor="middle">USB end → Jetson</text>
+<text x="56" y="261" font-size="13" fill="#5A6578">TXD</text>
+<rect x="96" y="248" width="26" height="13" rx="3" fill="#2F9E44"/>
+<path d="M 240 254 H 310.5 V 200 H 381" fill="none" stroke="#2F9E44" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="56" y="287" font-size="13" fill="#5A6578">RXD</text>
+<rect x="96" y="274" width="26" height="13" rx="3" fill="#FFFFFF" stroke="#111A2E" stroke-width="1"/>
+<path d="M 240 280 H 310.5 V 248 H 381" fill="none" stroke="#9AA6BA" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M 240 280 H 310.5 V 248 H 381" fill="none" stroke="#FFFFFF" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="56" y="313" font-size="13" fill="#5A6578">GND</text>
+<rect x="96" y="300" width="26" height="13" rx="3" fill="#111A2E"/>
+<path d="M 240 306 H 310.5 V 296 H 381" fill="none" stroke="#111A2E" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="40" y="353" font-size="13" fill="#5A6578">USART2 · 115200 8N1 · 15-byte CMD @ 100 Hz</text>
+<text x="40" y="375" font-size="13" fill="#E8590C" font-weight="700">red +5 V wire is left unconnected</text>
+<rect x="760" y="355" width="200" height="150" rx="12" fill="#FFFFFF" stroke="#5A6578" stroke-width="2"/>
+<text x="860.0" y="383" font-size="15" font-weight="700" fill="#111A2E" text-anchor="middle">VESC 6 MkVI</text>
+<text x="860.0" y="403" font-size="12" fill="#5A6578" text-anchor="middle">COMM port (JST-GH)</text>
+<rect x="776" y="428" width="26" height="13" rx="3" fill="#C92A2A"/>
+<text x="812" y="441" font-size="13" fill="#5A6578">RX</text>
+<path d="M 629 380 H 694.5 V 434 H 760" fill="none" stroke="#C92A2A" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+<rect x="776" y="454" width="26" height="13" rx="3" fill="#8B5E34"/>
+<text x="812" y="467" font-size="13" fill="#5A6578">TX</text>
+<path d="M 629 428 H 694.5 V 460 H 760" fill="none" stroke="#8B5E34" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+<rect x="776" y="480" width="26" height="13" rx="3" fill="#111A2E"/>
+<text x="812" y="493" font-size="13" fill="#5A6578">GND</text>
+<path d="M 629 476 H 694.5 V 486 H 760" fill="none" stroke="#111A2E" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="960" y="533" font-size="13" fill="#5A6578" text-anchor="end">USART3, TX/RX swapped in software · 38400 8N1</text>
+<text x="960" y="555" font-size="13" fill="#E8590C" font-weight="700" text-anchor="end">the red VESC wire is a signal, not 5 V</text>
+<text x="28" y="548" font-size="14" font-weight="700" fill="#111A2E">Wire colours</text>
+<rect x="28" y="570" width="26" height="13" rx="3" fill="#2F9E44"/>
+<text x="62" y="581" font-size="13" fill="#5A6578">green: Jetson → STM32 (D0)</text>
+<rect x="358" y="570" width="26" height="13" rx="3" fill="#FFFFFF" stroke="#111A2E" stroke-width="1"/>
+<text x="392" y="581" font-size="13" fill="#5A6578">white: STM32 → Jetson (D1)</text>
+<rect x="688" y="570" width="26" height="13" rx="3" fill="#111A2E"/>
+<text x="722" y="581" font-size="13" fill="#5A6578">black: GND, both links</text>
+<rect x="28" y="596" width="26" height="13" rx="3" fill="#C92A2A"/>
+<text x="62" y="607" font-size="13" fill="#5A6578">red: STM32 → VESC RX (D5)</text>
+<rect x="358" y="596" width="26" height="13" rx="3" fill="#8B5E34"/>
+<text x="392" y="607" font-size="13" fill="#5A6578">brown: VESC TX → STM32 (A5)</text>
+</svg>
