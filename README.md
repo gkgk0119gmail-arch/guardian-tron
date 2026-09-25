@@ -20,8 +20,8 @@ The car arrives fully wired: cable colours and pins are in [hw/wiring.md](hw/wir
 
 git clone https://github.com/gkgk0119gmail-arch/guardian-tron.git
 cd guardian-tron
-py -m venv .venv                 
-.\.venv\Scripts\Activate.ps1             
+python3 -m venv .venv                  # Windows: py -m venv .venv
+source .venv/bin/activate              # Windows: .\.venv\Scripts\Activate.ps1
 pip install -r sw/requirements.txt     # pyserial, matplotlib, numpy
 ```
 
