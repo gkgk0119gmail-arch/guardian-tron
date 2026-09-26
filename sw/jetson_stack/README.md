@@ -67,6 +67,10 @@ was wired. Not part of the contest measurements, kept because the replay and mal
 defences in the shipped firmware came out of running them. `jetson/ecu/vesc.py` and
 `jetson/ecu/lidar.py` were verified against the real hardware.
 
+These same three threats were also driven against a simulated car in CARLA, which is where
+we confirmed the veto logic works and where we found the limitation that made us give the
+STM32 its own sensors: [`docs/CARLA_SIL.md`](docs/CARLA_SIL.md).
+
 For faults injected into the *shipped* system instead, use `pc_host.py --scenario` (see
 [`sw/tools/`](../tools/)) or `hibiki.sh stress | freeze`.
 

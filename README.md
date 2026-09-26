@@ -147,6 +147,30 @@ Every drive command goes through an **STM32N6570-DK running μT-Kernel 3.0**. Th
 The NPU result reaches the brake through μT-Kernel preemption: the vision task raises the hazard, the gate task preempts it, and the brake command is issued **30 µs** later.
 The Jetson is not in this loop. An MPU keeps the AI task from writing gatekeeper memory. A dispatcher hook measures every task switch.
 
+### Before the car: the same veto logic in CARLA
+
+We did not start on hardware. The gatekeeper first drove a simulated car in CARLA, with an
+attacker injecting steering into the link, so we could ask whether the veto logic actually
+stops an attack before risking a real vehicle.
+
+![CARLA: normal driving, a full-lock steering injection vetoed, the same attack with the gatekeeper disabled, and a slow drift that stays inside the envelope](sw/jetson_stack/docs/carla/carla_four_cases.jpg)
+
+Same scenario, same instant, four cases. A **−540° full-lock injection is clamped to −5.4°**
+by the steering rate limit (`STEER_RATE`) and the car stays in its lane; the identical attack
+against a car whose gatekeeper has been disabled leaves the lane **7 times**. The fourth panel
+is the one that shaped this project: a slow drift of −0.0035° per frame is *legal*, every
+command is approved, and the car drifts anyway — a gatekeeper that only judges the commands it
+is handed cannot catch that. That is why the STM32 on this car has **its own camera, NPU and
+IMU** instead of trusting the link alone.
+
+`gatekeeper_core.c` and `protocol.c` are byte-identical between that simulator and the firmware
+on the board; `safety_envelope.c` is the same code retuned to this car (±17.5°, 300 °/s). The
+simulator settled the decision logic, and the board settled the timing — every microsecond in
+this README was measured on the STM32 with the DWT cycle counter, never in simulation.
+
+Details, the Korean HUD translated, and what did not carry over:
+[sw/jetson_stack/docs/CARLA_SIL.md](sw/jetson_stack/docs/CARLA_SIL.md).
+
 ## Inside the car
 
 The car with the top deck removed. The LiDAR and the Jetson plan the path. The STM32N6570-DK running μT-Kernel 3.0 checks every drive command before anything reaches the VESC.
@@ -264,7 +288,8 @@ guardian-tron/
     │   ├── gt/                gatekeeper: gt_gate.c (task), gt_uart.c, gt_vesc.c, gatekeeper_core.c, safety_envelope.c, protocol.c
     │   ├── Src/, Inc/         ST camera + NPU pipeline adapted to run as a task
     │   └── mtk3_bsp2/         μT-Kernel 3.0 BSP2 (TRON Forum), 3 documented changes
-    ├── jetson_stack/          Jetson side: ros2/ (gt_bridge, launch files), bench/ (Linux jitter probe), earlier SIL tools
+    ├── jetson_stack/          Jetson side: ros2/ (gt_bridge, launch files), bench/ (Linux jitter probe),
+    │                          the gatekeeper logic + earlier SIL and CARLA work (docs/CARLA_SIL.md)
     ├── examples/              hibiki_eval.py: judge every claim from a live board or a recorded log (start here)
     ├── requirements.txt       Python packages for the examples (pyserial, matplotlib, numpy)
     ├── tools/                 flash_boot.sh, load_vision.sh, pc_host.py (Jetson stand-in), nn_weights.sh
