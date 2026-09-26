@@ -268,6 +268,7 @@ All numbers are printed by the firmware itself (DWT cycle counter, 1.25 ns resol
 | [hw/README.md](hw/README.md) | Bill of materials and photos |
 | [sw/docs/test_report.md](sw/docs/test_report.md) | Measurement method and results |
 | [sw/docs/third_party_software.md](sw/docs/third_party_software.md) | Third-party software, models, datasets and licenses |
+| [sw/jetson_stack/docs/CARLA_SIL.md](sw/jetson_stack/docs/CARLA_SIL.md) | The veto logic driven in CARLA before the board existed |
 
 ## Fixed issue: rare monitor jitter spikes
 
@@ -278,6 +279,7 @@ The first long runs on the car (`sw/results/raw_logs/run_F…run_I`, 121 034 mon
 ```
 guardian-tron/
 ├── README.md                  this file
+├── LICENSE                    MIT, with the third-party licenses listed
 ├── hw/                        hardware
 │   ├── README.md              bill of materials (with photo)
 │   ├── wiring.md              pins, ports, baud rates, power, board switches
@@ -288,7 +290,7 @@ guardian-tron/
     │   │                      gv_mpu.c (MPU), gv_perf.c (dispatch hook, metrics), gv_log.c (logger), gv_i2c_lock.c
     │   ├── gt/                gatekeeper: gt_gate.c (task), gt_uart.c, gt_vesc.c, gatekeeper_core.c, safety_envelope.c, protocol.c
     │   ├── Src/, Inc/         ST camera + NPU pipeline adapted to run as a task
-    │   └── mtk3_bsp2/         μT-Kernel 3.0 BSP2 (TRON Forum), 3 documented changes
+    │   └── mtk3_bsp2/         μT-Kernel 3.0 BSP2 (TRON Forum), 4 documented changes in 3 files
     ├── jetson_stack/          Jetson side: ros2/ (gt_bridge, launch files), bench/ (Linux jitter probe),
     │                          the gatekeeper logic + earlier SIL and CARLA work (docs/CARLA_SIL.md)
     ├── examples/              hibiki_eval.py: judge every claim from a live board or a recorded log (start here)

@@ -41,9 +41,9 @@ Live camera image with an overlay:
 | `[gate] n=… ok=… veto=… bad=… replay=… maxlat=…` | 1 s | gatekeeper counters since boot; `STOPPED`/`DRIVING`; camera state; UART overruns |
 | `[vision] 15.0 fps \| NPU 28515 us \| persons 1 (tallest h 42%) \| clear/HAZARD` | 1 s | vision pipeline: frame rate, NPU time, detections, hazard state, `isp_err` = camera I2C errors |
 | `[imu] roll pitch yaw a_h \| 100 Hz period … jitter …` | 5 s | IMU attitude (Kalman), monitor period and jitter, step time |
-| `[perf] cpu idle … gate … imu … vision …` | 5 s | CPU share per task (from the dispatcher hook) and task switches per second |
+| `[perf] cpu idle … log … gate … imu … vision … report …` | 5 s | CPU share per task (from the dispatcher hook) and task switches per second |
 | `[metric] name: n mean p50 p95 p99 max \| target < … over N -> PASS/FAIL` | 10 s | cumulative timing statistics since boot against the design targets (printed by the `report` task, priority 25, so reporting never delays a safety task) |
-| `[stack] gate 1384/4096 B …` | 10 s | stack high-water mark per task |
+| `[stack] gate 1012/4096 B (24%) imu 1164/4096 B (28%) …` | 10 s | stack high-water mark per task (5 tasks, `report` is the tightest at 69 %) |
 | `[gate] STOP …`, `[gate] SLOW …`, `[fault] …` | event | safety events with their latency breakdown |
 
 ## Tasks

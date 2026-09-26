@@ -2,7 +2,7 @@
 
 What to run, what to look at, and what counts as a pass. The fastest path is the runbook in the [README](../../README.md): one terminal watches the STM32 over USB (`python3 sw/examples/hibiki_eval.py --watch`), a second one drives the car from the Jetson over ssh (`~/guardian/hibiki.sh start 0.3` → `arm`). That script judges every check below automatically and writes `sw/examples/out/<date_time>/report.md`.
 
-Three ways to run the checks:
+Four ways to run the checks:
 
 | How | Command | Covers |
 |---|---|---|

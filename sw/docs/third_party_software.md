@@ -6,7 +6,7 @@ Contest rule 1.3: the name, rights holder, how it was obtained, what it does in 
 
 | Name | Rights holder | Obtained from | Function in HIBIKI | License |
 |---|---|---|---|---|
-| **μT-Kernel 3.0 BSP2** (micro T-Kernel 3.00, STM32N657 port) | Ken Sakamura / TRON Forum | TRON Forum μT-Kernel 3.0 BSP2 package for STM32N6 (`mtk3bsp2_stm32n657.zip`), <https://github.com/tron-forum/mtk3_bsp2> | Real-time OS: tasks, cyclic handler, event flags, mutex (priority inheritance), dispatcher. Three changes, listed in [setup_guide.md](setup_guide.md) | T-License 2.2 (some files 2.1) |
+| **μT-Kernel 3.0 BSP2** (micro T-Kernel 3.00, STM32N657 port) | Ken Sakamura / TRON Forum | TRON Forum μT-Kernel 3.0 BSP2 package for STM32N6 (`mtk3bsp2_stm32n657.zip`), <https://github.com/tron-forum/mtk3_bsp2> | Real-time OS: tasks, cyclic handler, event flags, mutex (priority inheritance), dispatcher. Four changes in three files, listed in [setup_guide.md](setup_guide.md) | T-License 2.2 (some files 2.1) |
 | STM32N6xx HAL/LL drivers, CMSIS device files | STMicroelectronics, Arm | STM32CubeN6 1.3.0, inside STM32N6-GettingStarted-ObjectDetection v2.3.1, <https://github.com/STMicroelectronics/STM32N6-GettingStarted-ObjectDetection> | Clocks, GPIO, I2C, UART (console), DCMIPP, LTDC, DMA2D, XSPI, caches | BSD-3-Clause / Apache-2.0 |
 | CMSIS Core | Arm Limited | same package | Cortex-M55 core access (DWT cycle counter, MPU, NVIC) | Apache-2.0 |
 | STM32N6570-DK BSP + components (aps256xx PSRAM, mx66uw1g45g NOR, LCD, fonts) | STMicroelectronics | same package | External PSRAM/NOR, LCD | BSD-3-Clause |
@@ -43,4 +43,4 @@ Contest rule 1.3: the name, rights holder, how it was obtained, what it does in 
 
 ## Our code
 
-`guardian_vision/os/*`, `guardian_vision/gt/*`, `jetson_stack/*`, `tools/*`, `run_demo.sh` and `docs/*` are ours, released under the MIT License. The gatekeeper protocol/envelope core (`gt/gatekeeper_core.c`, `gt/protocol.c`, `gt/safety_envelope.c`) and the Jetson threat scripts come from the team's earlier SDV safety co-processor project.
+`guardian_vision/os/*`, `guardian_vision/gt/*`, `jetson_stack/*`, `tools/*`, `run_demo.sh` and `docs/*` are ours, released under the MIT License. The gatekeeper protocol/envelope core (`gt/gatekeeper_core.c`, `gt/protocol.c`, `gt/safety_envelope.c`) and the Jetson threat scripts were written by us before this firmware existed, while the same logic was being driven in simulation ([CARLA_SIL.md](../jetson_stack/docs/CARLA_SIL.md)); they are reused here, with the envelope constants retuned to this car.

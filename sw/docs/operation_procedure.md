@@ -2,6 +2,8 @@
 
 Step by step, from power-off to a running system and back. What the outputs mean is in [operation_manual.md](operation_manual.md).
 
+> If you only want to evaluate the car, the runbook in the [top-level README](../../README.md) is shorter: it drives everything from `hibiki.sh` on the Jetson and `hibiki_eval.py` on your laptop, and needs no scripts on a development PC. This page is the full procedure, including the desk-only kit and `run_demo.sh`.
+
 ## A. Desk kit: STM32N6570-DK only (no car, no Jetson)
 
 Needed: the DK board with the camera module attached (as shipped), a USB-C cable, a PC with a serial terminal (TeraTerm, PuTTY, `screen`, `minicom`) or the Python script below.

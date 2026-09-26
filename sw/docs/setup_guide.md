@@ -89,7 +89,7 @@ Guardian-TRON start (gatekeeper + camera/NPU person stop + IMU monitor)
 [gate] camera monitor OK -> commands accepted
 [vision] 15.0 fps | NPU 28515 us ...
 [imu] ready: gravity in board axes (...) mg ...    <- keep the board still for 1 s after boot
-[metric] ctx_switch: n=2000 mean 415ns ... -> PASS    <- every 10 s
+[metric] ctx_switch: n=2000 mean 444ns p50 460ns p95 460ns p99 460ns max 872ns | target < 5700ns over 0 -> PASS   <- every 10 s
 ```
 
 ## 6. Jetson (only for the full car)
