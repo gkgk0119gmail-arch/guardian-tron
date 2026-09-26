@@ -180,6 +180,24 @@ flowchart LR
   W --> K["Buck converter 5 V 3 A"] --> S["STM32N6570-DK<br/>USB-C CN6 · never powered from the Jetson's USB"]
 ```
 
+#### How we actually powered the board while developing
+
+The buck converter above is the on-device path: it is what the car uses when it drives
+untethered, off the battery alone, and it is how the car is wired as shipped.
+
+While building the firmware and while recording every measurement in this README, we used
+the other option instead — a USB-C cable from a laptop straight into the same **ST-LINK
+port (CN6)**. That single cable carries the 5 V supply, the T-Monitor console and the
+ST-LINK flash/debug link at the same time, so we could change a task priority, reflash and
+re-run the same measurement in under a minute without touching the car's wiring or
+disconnecting the battery. That turnaround is what made the fixes in
+[Fixed issue](#fixed-issue-rare-monitor-jitter-spikes) and section 6 of the
+[test report](sw/docs/test_report.md) practical to find.
+
+Both paths deliver the same 5 V to the same connector, so the numbers hold either way, and
+only one of them may be plugged in at a time. The runbook at the top of this README uses the
+laptop cable for the same reason: it is also how you read the board's console.
+
 ## Measured on the board (not targets)
 
 | Metric | Design target | Measured (max, n) |
