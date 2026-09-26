@@ -46,7 +46,7 @@ make sign         # -> build/guardian_sign.bin                  (for boot from f
 | `mtk3_bsp2/config/config.h` | `CNF_TIMER_PERIOD` 10 → **1** ms | 1 ms time resolution for the watchdog and the 100 Hz cyclic handler; `HAL_Delay()` in the camera driver no longer rounds up to 10 ms (vision 10 → 15 fps) |
 | `mtk3_bsp2/config/config.h` | `CNF_SYSTEMAREA_END` = `0x340FC000` | Kernel memory must end below the 16 KB MSP stack; AXISRAM2+ belongs to the NPU |
 | `mtk3_bsp2/config/config_bsp/stm32_cube/config_bsp.h` | `DEVCNF_USE_HAL_IIC`, `DEVCNF_USE_HAL_ADC` → 0 | The ST camera middleware owns I2C1 |
-| `mtk3_bsp2/sysdepend/stm32_cube/cpu/core/armv8m/dispatch.S` | calls `gv_dsp_hook(TCB *next)` at every task switch (and `NULL` when no task is runnable) | This BSP has no `td_hok_dsp()`. The hook gives per-task CPU time, a switch trace and the per-task MPU view (`os/gv_perf.c`, `os/gv_mpu.c`) |
+| `mtk3_bsp2/sysdepend/stm32_cube/cpu/core/armv8m/dispatch.S` | calls `gv_dsp_hook(TCB *next)` at every task switch (and `NULL` when no task is runnable) | T-Kernel/DS declares `td_hok_dsp()` in `tk/dbgspt.h`, but BSP2 ships no implementation of it (`TD_HDSP` appears nowhere outside that header) and `USE_DBGSPT` is 0 in our config, so the call would not link. Our hook gives per-task CPU time, a switch trace and the per-task MPU view (`os/gv_perf.c`, `os/gv_mpu.c`) |
 
 ## 4. Flash the board (boot from flash)
 
