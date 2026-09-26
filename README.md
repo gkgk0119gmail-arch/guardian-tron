@@ -155,7 +155,8 @@ stops an attack before risking a real vehicle.
 
 ![CARLA: normal driving, a full-lock steering injection vetoed, the same attack with the gatekeeper disabled, and a slow drift that stays inside the envelope](sw/jetson_stack/docs/carla/carla_four_cases.jpg)
 
-Same scenario, same instant, four cases. A **−540° full-lock injection is clamped to −5.4°**
+Same scenario, same instant, four cases; the counts on screen were tallied by the simulation
+as it ran. A **−540° full-lock injection is clamped to −5.4°**
 by the steering rate limit (`STEER_RATE`) and the car stays in its lane; the identical attack
 against a car whose gatekeeper has been disabled leaves the lane **7 times**. The fourth panel
 is the one that shaped this project: a slow drift of −0.0035° per frame is *legal*, every
@@ -168,7 +169,7 @@ on the board; `safety_envelope.c` is the same code retuned to this car (±17.5°
 simulator settled the decision logic, and the board settled the timing — every microsecond in
 this README was measured on the STM32 with the DWT cycle counter, never in simulation.
 
-Details, the Korean HUD translated, and what did not carry over:
+All three scenarios, how to read the HUD, and what did and did not carry over to the board:
 [sw/jetson_stack/docs/CARLA_SIL.md](sw/jetson_stack/docs/CARLA_SIL.md).
 
 ## Inside the car
