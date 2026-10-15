@@ -90,7 +90,7 @@ On the Jetson, the host-side round-trip time of a command through the USB-TTL is
 
 ## 7. Not measured / limitations
 
-- **Rare monitor jitter spikes in long runs: fixed.** The four floor runs recorded while filming (121 034 periods) had 20 periods (0.017 %) starting 0.1–0.82 ms late and a 1.14 ms longest step. The cause was the gate task (priority 8) formatting the 10 s metrics report itself. Moving the reports to a `report` task at priority 25 removed it: `run_J` (80 932 periods over 13 min, with the Jetson commanding at 100 Hz) shows **0 periods over 100 µs, max 11.9 µs, longest step 422 µs**. The flashed image and `sw/binaries/` contain the fix.
+- **Rare monitor jitter spikes in long runs: fixed.** The four floor runs recorded while filming (121 034 periods) had 20 periods (0.017 %) starting 0.1–0.82 ms late and a 1.14 ms longest step. The cause was the gate task (priority 8) formatting the 10 s metrics report itself. Moving the reports to a `report` task at priority 25 removed it: `run_J` (80 932 periods over 13 min, with the Jetson commanding at 100 Hz) shows **0 periods over 100 µs, max 11.9 µs, longest step 422 µs**. This is firmware v1, the submitted version, and the image on the board as shipped; `sw/binaries/` now holds v2 (see item 7 above).
 
 - Power consumption was not measured.
 - The distance estimate is monocular (box height). Calibrated with one real person: box height 42 % at 2.0 m. It depends on the person's height and the camera pitch.

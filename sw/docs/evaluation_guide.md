@@ -57,8 +57,8 @@ On our Jetson Orin Nano: max period error 221 µs idle and 445 µs (absolute sle
 
 After a few minutes the firmware prints, every 10 s. This is the last block of our
 reference run, copied unchanged from
-`sw/results/raw_logs/run_J_long_after_report_fix/stm32.log` (13 min, the same firmware
-that is flashed on the board):
+`sw/results/raw_logs/run_J_long_after_report_fix/stm32.log` (13 min, firmware v1 — the
+submitted version and the image on the board as shipped):
 
 ```
 [metric] ctx_switch: n=2000 mean 444ns p50 460ns p95 460ns p99 460ns max 872ns | target < 5700ns over 0 -> PASS

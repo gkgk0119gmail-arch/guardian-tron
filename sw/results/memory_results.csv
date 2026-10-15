@@ -14,3 +14,5 @@ stack,imu,1164,of 4096 B (28 %)
 stack,vision,1508,of 32768 B (4 %)
 stack,log,444,of 1024 B (43 %)
 stack,report,1412,of 2048 B (68 %)
+# All rows are the firmware v1 build (commit 1e59965), the submitted version that every
+# measurement in this repository was taken with. Firmware v2 (a965d06) adds 304 bytes of .text.

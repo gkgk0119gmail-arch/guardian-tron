@@ -129,7 +129,7 @@ No single run triggers every check: each one prints `NOT RUN` for the hazards th
 happen in it. Run A and run D were recorded before the report-task fix, so their monitor
 jitter is the old 23.2 µs; run J is the current firmware.
 
-To rebuild and reflash the firmware (not needed for evaluation: the board is shipped flashed, and `sw/binaries/` holds the same images), see [sw/docs/setup_guide.md](sw/docs/setup_guide.md).
+To rebuild and reflash the firmware, see [sw/docs/setup_guide.md](sw/docs/setup_guide.md). The board was shipped already flashed, so no build is needed to evaluate it — but see [Firmware versions](#firmware-versions) below: `sw/binaries/` now holds a newer image than the one on the shipped board.
 
 ## How it works
 
@@ -272,7 +272,31 @@ All numbers are printed by the firmware itself (DWT cycle counter, 1.25 ns resol
 
 ## Fixed issue: rare monitor jitter spikes
 
-The first long runs on the car (`sw/results/raw_logs/run_F…run_I`, 121 034 monitor periods) had 20 periods (0.017 %) that started 0.1–0.82 ms late, and a longest monitor step of 1.14 ms. No 10 ms deadline was missed. Cause: every 10 s the `gate` task (priority 8, above the `imu` monitor at 10) computed the percentile table and formatted the console report itself, a 0.5–0.8 ms burst. The reports now come from a separate `report` task at priority 25, below every safety task. With that firmware (`run_J`, and the flashed image in `sw/binaries/`): **0 of 80 932 periods over 100 µs, max 11.9 µs, longest step 422 µs**. The older logs are kept unchanged, so `hibiki_eval.py --offline` on `run_F…run_I` still shows the two FAIL lines.
+The first long runs on the car (`sw/results/raw_logs/run_F…run_I`, 121 034 monitor periods) had 20 periods (0.017 %) that started 0.1–0.82 ms late, and a longest monitor step of 1.14 ms. No 10 ms deadline was missed. Cause: every 10 s the `gate` task (priority 8, above the `imu` monitor at 10) computed the percentile table and formatted the console report itself, a 0.5–0.8 ms burst. The reports now come from a separate `report` task at priority 25, below every safety task. With that firmware (`run_J`, which is firmware v1 below): **0 of 80 932 periods over 100 µs, max 11.9 µs, longest step 422 µs**. The older logs are kept unchanged, so `hibiki_eval.py --offline` on `run_F…run_I` still shows the two FAIL lines.
+
+## Firmware versions
+
+| Version | Commit | What it is |
+|---|---|---|
+| **v1** | [`1e59965`](https://github.com/gkgk0119gmail-arch/guardian-tron/commit/1e59965) | The contest submission, and the image on the board as shipped. **Every measurement in this README was taken with it** (`run_J`) |
+| **v2** | [`a965d06`](https://github.com/gkgk0119gmail-arch/guardian-tron/commit/a965d06) | v1 plus one fix, described below. This is what `sw/binaries/` holds now |
+
+**The v2 fix.** While evaluating our submission, the contest secretariat found that
+the board could print its boot lines up to `[vision] ready …` and then go completely
+silent, with a black LCD. The cause was in our firmware: `gv_vision_step()` wrapped the
+NPU call in `assert()`, and a failing assert spins inside the vision task at priority 20
+— above the report task (25) and the log task (30). Those two were starved, so the
+console died. The gate task at priority 8 still held the car correctly and still queued
+`camera monitor LOST`, but the logger could no longer drain that message to the UART, so
+the correct safety behaviour was invisible from outside. The NPU calls now return an
+error, the vision task reports it and yields, and the console keeps running. Details:
+item 7 in [sw/docs/test_report.md](sw/docs/test_report.md) section 6.
+
+**Why the measurements still stand.** v2 changes only the path taken when the NPU
+*fails*. When the NPU works — which is the case in every recorded run — the code
+executed per frame is identical, and the gate, imu, report and log tasks are untouched.
+The firmware grew by 304 bytes of `.text`, which `sw/results/memory_results.csv` does not
+include, because that file reports the v1 build that the measurements came from.
 
 ## Repository layout
 

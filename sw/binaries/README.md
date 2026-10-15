@@ -1,5 +1,12 @@
 # Ready-to-flash images
 
+> **These are firmware v2** (commit `a965d06`), which is v1 plus the fix for the silent
+> console on an NPU failure. The board was shipped with **v1** (commit `1e59965`), which is
+> also the version every measurement in the repository was taken with. See
+> [Firmware versions](../../README.md#firmware-versions). `ai_fsbl.hex` and
+> `network_data.hex` are ST files and are identical in both.
+
+
 | File | Flash address | What |
 |---|---|---|
 | `ai_fsbl.hex` | 0x70000000 (address inside the hex) | ST first-stage boot loader v1.4.0 (SLA0044) |
