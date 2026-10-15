@@ -69,8 +69,28 @@ void gv_vision_task(INT stacd, void *exinf)
   tm_printf((UB*)"[vision] ready: person stop if conf>=%d%% h>=%d%% |x-0.5|<=%d%%, hold %d ms\n",
             (INT)(GV_MIN_CONF * 100), (INT)(GV_MIN_BOX_H * 100), (INT)(GV_CORRIDOR_HALF * 100), GV_HOLD_MS);
 
+  UW npu_fail = 0;
   while (1) {
-    if (gv_vision_step(&res) < 0) { misses++; continue; }
+    INT st = gv_vision_step(&res);
+    if (st < 0) {
+      misses++;
+      if (st <= -2) {
+        /* The NPU (-2) or the box decoder (-3) refused the frame, so no detection is
+         * possible at all. Say so and then sleep: this loop must never spin, because
+         * the report task (25) and the log task (30) sit below this one and a busy
+         * vision task starves them - the console would go silent and the failure
+         * could not be diagnosed from the outside. The gate task keeps the car held
+         * on its own, since gv_frames stops advancing. */
+        npu_fail++;
+        if (npu_fail == 1 || (npu_fail % 100) == 0)
+          tm_printf((UB*)"[vision] NPU step FAILED (rc %d, %d times): no person detection is "
+                         "possible. Check the boot line \"[hw] ... weights[0] 0xfc98fd05 ok\": the "
+                         "NPU weights at 0x70380000 (network_data.hex) are the usual cause. "
+                         "The car stays held.\n", (INT)st, (INT)npu_fail);
+        tk_dly_tsk(100);
+      }
+      continue;
+    }
     frames++;
 
     rogue_write_check();
@@ -114,9 +134,10 @@ void gv_vision_task(INT stacd, void *exinf)
       fps_x10 = frames * 10000 / (ms - t_stat);
       float top_h = 0.0f;
       for (INT i = 0; i < res.nb; i++) if (res.box[i].h > top_h) top_h = res.box[i].h;
-      tm_printf((UB*)"[vision] %d.%d fps | NPU %d us (max %d) | persons %d (tallest h %d%%) | %s | misses %d isp_err %d\n",
+      tm_printf((UB*)"[vision] %d.%d fps | NPU %d us (max %d) | persons %d (tallest h %d%%) | %s | misses %d isp_err %d npu_err %d\n",
                 (INT)(fps_x10 / 10), (INT)(fps_x10 % 10), (INT)infer_us, (INT)infer_max_us, res.nb,
-                (INT)(top_h * 100), hazard_now ? "HAZARD" : "clear", (INT)misses, (INT)gv_isp_err);
+                (INT)(top_h * 100), hazard_now ? "HAZARD" : "clear", (INT)misses, (INT)gv_isp_err,
+                (INT)gv_npu_err);
       frames = 0; t_stat = ms; infer_max_us = 0;
     }
   }

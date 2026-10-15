@@ -68,5 +68,6 @@ The boot log prints this table as `[rtos]` lines.
 | `isp_err` increasing, fps < 15 | camera I2C disturbed (ribbon) | reseat the ribbon, power-cycle |
 | `[imu] calibration: car moving, retrying` | board moved during the first second | keep it still; it retries every second |
 | LCD black, no log after flashing | wrong image layout (unsigned or not `--align`ed) or NOR left in OPI mode by the loader | re-flash with `make sign` + `tools/flash_boot.sh`, then a full power-cycle |
+| LCD black, boot lines up to `[vision] ready …` then **nothing at all** | the NPU cannot run the network, almost always unreadable weights at `0x70380000`. Check the boot line `[hw] … weights[0] … ok` | re-write `network_data.hex`, then unplug every USB cable for two seconds (a RESET press does not clear the NOR flash's OPI mode). The log now names this itself: `[vision] NPU step FAILED …` |
 | `DUPLICATE PROCESSES` in `run_demo.sh` | an older ROS 2 stack still running on the Jetson | `./run_demo.sh` stops it; or `pkill -f guardian` on the Jetson |
 | `/dev/ttyUSB0` missing on the Jetson | PL2303 hung (`error -32` in dmesg) | unplug/replug the USB-TTL |

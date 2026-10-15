@@ -114,6 +114,7 @@ UART_HandleTypeDef huart1;
 volatile int32_t cameraFrameReceived;
 volatile uint32_t gv_frame_cyc;
 volatile uint32_t gv_stage, gv_frames, gv_cam_err, gv_isp_err, gv_ready;
+volatile uint32_t gv_npu_err, gv_pp_err;   /* NPU / post-processing refusals (see gv_vision_step) */
 static stai_ptr nn_out[STAI_NETWORK_OUT_NUM];
 static int32_t nn_out_len[STAI_NETWORK_OUT_NUM];
 static stai_size number_output;
@@ -198,7 +199,15 @@ int gv_vision_init(void)
 
 /**
   * @brief  One frame: snapshot into the NN input, NPU inference, box decoding.
-  * @retval 0 on success, -1 if no camera frame arrived
+  * @retval 0 on success, -1 if no camera frame arrived, -2 if the NPU refused the
+  *         frame, -3 if post-processing refused it.
+  *
+  * Guardian-TRON: the NPU and post-processing calls used to be wrapped in assert().
+  * An assert here spins inside the vision task (priority 20), which starves the
+  * report task (25) and the log task (30), so the console goes silent and the
+  * failure cannot be diagnosed from the outside. They now return an error instead;
+  * the caller counts it, keeps yielding, and the gate task holds the car because
+  * no frames are arriving.
   */
 int gv_vision_step(gv_result_t *r)
 {
@@ -224,12 +233,12 @@ int gv_vision_step(gv_result_t *r)
   gv_stage = GV_ST_NPU;
   uint32_t c0 = DWT->CYCCNT;
   int ret = stai_network_run(network_context, STAI_MODE_SYNC);
-  assert(ret == 0);
+  if (ret != 0) { gv_npu_err++; return -2; }
   r->infer_cyc = DWT->CYCCNT - c0;
 
   gv_stage = GV_ST_PP;
   ret = app_postprocess_run((void **) nn_out, number_output, &pp_output, &pp_params);
-  assert(ret == 0);
+  if (ret != 0) { gv_pp_err++; return -3; }
 
   /* copy the boxes out: pp_output points into the NN output buffers we discard below */
   r->nb = 0;

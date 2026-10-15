@@ -35,6 +35,8 @@ extern volatile uint32_t gv_frames;           /* completed frames */
 extern volatile uint32_t gv_cam_err;          /* DCMIPP pipe error callbacks */
 extern volatile uint32_t gv_isp_err;          /* sensor I2C failures during AE/AWB (non-fatal) */
 extern volatile uint32_t gv_ready;            /* 1 once the camera + NPU pipeline produces frames */
+extern volatile uint32_t gv_npu_err;          /* NPU inference refusals (usually bad weights in NOR) */
+extern volatile uint32_t gv_pp_err;           /* box-decoding refusals */
 enum { GV_ST_ISP = 1, GV_ST_START, GV_ST_WAIT, GV_ST_NPU, GV_ST_PP, GV_ST_DECIDE, GV_ST_DRAW };
 extern void gv_os_sleep_ms(uint32_t ms);      /* kernel side */
 

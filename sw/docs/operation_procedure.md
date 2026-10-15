@@ -9,8 +9,17 @@ Step by step, from power-off to a running system and back. What the outputs mean
 Needed: the DK board with the camera module attached (as shipped), a USB-C cable, a PC with a serial terminal (TeraTerm, PuTTY, `screen`, `minicom`) or the Python script below.
 
 1. Check the switches: **BOOT0 left, BOOT1 left**.
-2. Connect the ST-LINK USB-C port to the PC. The board powers up and boots from flash (≈ 5 s).
-3. Open the ST-LINK virtual COM port at **115200 8N1**. On Windows it is a `COMx` "STMicroelectronics STLink Virtual COM Port". If the terminal stays empty, see "No log" in the operation manual.
+2. **If you have just programmed the flash, do a full power cycle first**: unplug *every* USB cable from the board (including the Jetson's USB-TTL), wait two seconds, then plug the ST-LINK USB-C cable back in. The external loader leaves the NOR flash in OPI mode, and only removing power resets it. A reset button press is **not** enough: the application boots, but the NPU then reads its weights from a NOR flash that is still in the wrong mode.
+3. Connect the ST-LINK USB-C port to the PC. The board powers up and boots from flash (≈ 5 s).
+4. Open the ST-LINK virtual COM port at **115200 8N1**. On Windows it is a `COMx` "STMicroelectronics STLink Virtual COM Port". If the terminal stays empty, see "No log" in the operation manual.
+
+   Open the terminal **before** powering the board, or press RESET with it open. The first line is the memory bring-up check and it is the one that matters if anything goes wrong:
+
+   ```
+   [hw] PSRAM init 0 mm 0 rw ok | NOR init 0 mm 0 | weights[0] 0xfc98fd05 ok
+   ```
+
+   Both `ok` are required. `weights[0] ... MISMATCH` means the NPU weights at `0x70380000` are not readable: re-write `network_data.hex` and power-cycle as in step 2. The firmware keeps running and holds the car, and the vision task prints `[vision] NPU step FAILED ...` instead of detecting people.
 4. **Keep the board still for 2 s** after power-on. The IMU calibrates its zero. The log prints `[imu] ready`.
 5. The LCD shows the camera image. The log prints the task table (`[rtos] …`), `[vision] 15.0 fps …` every second and the `[metric]` table every 10 s.
 6. Walk into the camera's view: a box is drawn around the person. Within about 2 m, the log prints `[gate] STOP #n: PERSON AHEAD …`. Further away: `[gate] SLOW …` (only while a host sends drive commands).
