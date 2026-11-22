@@ -133,6 +133,8 @@ To rebuild and reflash the firmware, see [sw/docs/setup_guide.md](sw/docs/setup_
 
 ## How it works
 
+![Guardian-TRON system architecture: the Hokuyo UST-10LX LiDAR feeds the Jetson Orin Nano path planner, the IMX335 camera feeds the NPU on the μT-Kernel 3.0 STM32 board, and every Jetson command passes the STM32 gatekeeper before it reaches the VESC](sw/docs/architecture.png)
+
 A Jetson Orin Nano plans the path from a LiDAR (ROS 2 / F1TENTH stack), but it never touches the actuators.
 Every drive command goes through an **STM32N6570-DK running μT-Kernel 3.0**. The STM32 alone decides whether the car may move:
 
@@ -323,7 +325,7 @@ guardian-tron/
     ├── run_demo.sh            one-command demo on the car (--stress, --freeze fault injection)
     ├── binaries/              ready-to-flash images + SHA256SUMS
     ├── results/               raw logs, CSV and graphs of the measurements (make_figures.py redraws them)
-    ├── docs/                  setup, operation, evaluation, test report, third-party list
+    ├── docs/                  setup, operation, evaluation, test report, third-party list, architecture.png
     └── archive/               earlier bring-up projects (not needed to build)
 ```
 
